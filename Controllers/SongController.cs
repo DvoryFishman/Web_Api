@@ -2,6 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using core.Models;
 using core.Services;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using core.Models;
+using core.Services;
+using CORE.Interfaces;
 
 namespace core.Controllers
 {
@@ -9,26 +15,27 @@ namespace core.Controllers
     [Route("[controller]")]
     public class SongController : ControllerBase
     {
-        ISongService SongService
-        public SongController( ISongService SongService)
+        Isong SongService
+        public SongController(Isong SongService)
         {
+            this.SongService = SongService;
         }
 
         [HttpGet]
-        public ActionResult<List<Song>> GetAll()
+        public ActionResult<List<Song>> GetAll() 
         {
-            return SongService.GetAll();
+            SongService.GetAll();
         }
 
         [HttpGet("{id}")]
         public ActionResult<Song> Get(int id)
         {
-            Song? song = SongService.Get(id);
-            if (song == null)
+            var s = SongService.Get(id);
+            if (s == null)
             {
                 return NotFound();
             }
-            return song;
+            return s;
         }
 
         [HttpPost]
@@ -45,6 +52,9 @@ namespace core.Controllers
             {
                 return BadRequest();
             }
+            var existingSong = SongService.Get(id);
+            if (existingSong is null)
+                return NoContent();
             SongService.Update(song);
             return NoContent();
         }
@@ -52,14 +62,14 @@ namespace core.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            Song? song = SongService.Get(id);
+            var song = SongService.Get(id);
             if (song is null)
             {
                 return NotFound();
             }
 
             SongService.Delete(id);
-            return Ok(SongService.GetAll());
+            return Content(SongService.Count.ToString());
         }
     }
 }
