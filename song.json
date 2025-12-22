@@ -1,0 +1,22 @@
+[
+    {
+        "Id":1,
+        "Name":"TYH Nation Ft. All Star Cast",
+        "IsVocal":false
+    },
+     {
+        "Id":2,
+        "Name":"Tommorow",
+        "IsVocal":false
+    },
+     {
+        "Id":3,
+        "Name":"Trying My Best",
+        "IsVocal":true
+    },
+     {
+        "Id":4,
+        "Name":"Fire",
+        "IsVocal":false
+    },
+]
