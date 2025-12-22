@@ -18,5 +18,10 @@
     "Id": 4,
     "Name": "Fire",
     "isVocal": false
+  },
+  {
+    "Id": 5,
+    "Name": "\u05E7",
+    "isVocal": false
   }
 ]

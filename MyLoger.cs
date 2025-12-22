@@ -1,6 +1,10 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
-namespace CORE;
+namespace core;
 
 public class MyLoger
 {
@@ -14,7 +18,7 @@ public class MyLoger
         this.logger = logger;
     }
 
-    public async Task Invoke(HttpContext c)
+    public async Task InvokeAsync(HttpContext c)
     {
         var sw = new Stopwatch();
         sw.Start();
@@ -27,7 +31,7 @@ public class MyLoger
 
 public static partial class MiddlewareExtensions
 {
-    public static IApplicationBuilder UseMyLogMiddleware(this IApplicationBuilder builder)
+    public static IApplicationBuilder UseMyLog(this IApplicationBuilder builder)
     {
         return builder.UseMiddleware<MyLoger>();
     }

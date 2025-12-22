@@ -1,12 +1,8 @@
 
 using Microsoft.AspNetCore.Mvc;
 using core.Models;
-using core.Services;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using core.Models;
-using core.Services;
 using CORE.Interfaces;
 
 namespace core.Controllers
@@ -15,22 +11,23 @@ namespace core.Controllers
     [Route("[controller]")]
     public class SongController : ControllerBase
     {
-        Isong SongService
-        public SongController(Isong SongService)
+        private readonly Isong _songService;
+
+        public SongController(Isong songService)
         {
-            this.SongService = SongService;
+            _songService = songService;
         }
 
         [HttpGet]
-        public ActionResult<List<Song>> GetAll() 
+        public ActionResult<List<Song>> GetAll()
         {
-            SongService.GetAll();
+            return _songService.GetAll();
         }
 
         [HttpGet("{id}")]
         public ActionResult<Song> Get(int id)
         {
-            var s = SongService.Get(id);
+            var s = _songService.Get(id);
             if (s == null)
             {
                 return NotFound();
@@ -41,8 +38,8 @@ namespace core.Controllers
         [HttpPost]
         public IActionResult Create(Song song)
         {
-            SongService.Add(song);
-            return CreatedAtAction(nameof(Create), new { id = song.Id }, song);
+            _songService.Add(song);
+            return CreatedAtAction(nameof(Get), new { id = song.Id }, song);
         }
 
         [HttpPut("{id}")]
@@ -52,24 +49,24 @@ namespace core.Controllers
             {
                 return BadRequest();
             }
-            var existingSong = SongService.Get(id);
+            var existingSong = _songService.Get(id);
             if (existingSong is null)
-                return NoContent();
-            SongService.Update(song);
+                return NotFound();
+            _songService.Update(song);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var song = SongService.Get(id);
+            var song = _songService.Get(id);
             if (song is null)
             {
                 return NotFound();
             }
 
-            SongService.Delete(id);
-            return Content(SongService.Count.ToString());
+            _songService.Delete(id);
+            return Content(_songService.Count.ToString());
         }
     }
 }

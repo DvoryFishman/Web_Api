@@ -130,3 +130,6 @@ D:\שנה ב\core\obj\Debug\net8.0\refint\core.dll
 D:\שנה ב\core\obj\Debug\net8.0\core.pdb
 D:\שנה ב\core\obj\Debug\net8.0\core.genruntimeconfig.cache
 D:\שנה ב\core\obj\Debug\net8.0\ref\core.dll
+D:\שנה ב\core\obj\Debug\net8.0\core.sourcelink.json
+D:\שנה ב\core\bin\Debug\net8.0\song.json
+D:\שנה ב\core\bin\Debug\net8.0\Data\song.json
