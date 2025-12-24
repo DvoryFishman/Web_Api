@@ -29,6 +29,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.MapGet("/", () => Results.Redirect("/login.html")); 
+
 app.MapControllers();
 
 app.Run();

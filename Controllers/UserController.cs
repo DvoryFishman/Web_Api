@@ -1,6 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using core.Models;
 using core.Services;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace core.Controllers
 {
@@ -10,6 +15,28 @@ namespace core.Controllers
     {
         public UserController()
         {
+        }
+        [HttpPost]
+        [Route("[action]")]
+        public ActionResult<String> Login([FromBody] User User)
+        {
+            // var dt = DateTime.Now;
+            // if (User.Username != "D&Y"
+            // || User.Id !=(dt.Year+dt.Day)*dt.Month)
+            // { 
+            //     return Unauthorized();
+            // }
+
+            var claims = new List<Claim>
+            {
+                new Claim("username", User.Username),
+                new Claim("userid :", User.Id.ToString()),
+                new Claim("type", "users"),
+            };
+
+            var token = usersTokenService.GetToken(claims);
+
+            return new OkObjectResult(usersTokenService.WriteToken(token));
         }
 
         [HttpGet]
