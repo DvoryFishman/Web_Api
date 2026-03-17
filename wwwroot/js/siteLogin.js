@@ -1,3 +1,5 @@
+// const apiBaseUrl = 'http://localhost:5028';
+// const uri = `${apiBaseUrl}/user/login`;
 const uri = '/user/login';
 
 function loginUser() {
@@ -13,11 +15,16 @@ function loginUser() {
     })
     .then(response => {
         if (response.ok) {
-            // שמור userId ל-session/localStorage
             response.json().then(data => {
+                // שמור את כל הנתונים הדרושים
                 localStorage.setItem('userId', data.id);
+                localStorage.setItem('username', data.username);
+                localStorage.setItem('role', data.role);
+                localStorage.setItem('token', data.token);
                 localStorage.setItem('userFavorites', JSON.stringify(data.favorites || []));
-                window.location.href = 'index.html';
+                
+                // הפנה לעמוד השירים - גם מנהל וגם משתמש רגיל
+                window.location.href = '/index.html';
             });
         } else {
             document.getElementById('loginError').innerText = 'שם משתמש או סיסמה שגויים';

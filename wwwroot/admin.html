@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ניהול מנהל</title>
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>ניהול מנהל - ניהול משתמשים</h1>
+            <button class="logout-btn" onclick="logout()">התנתקות</button>
+        </div>
+
+        <div id="message" class="message"></div>
+
+        <!-- Add User Section -->
+        <div class="section add-user-section">
+            <h3>הוסף משתמש חדש</h3>
+            <div class="form-group">
+                <label for="newUsername">שם משתמש:</label>
+                <input type="text" id="newUsername" placeholder="הזן שם משתמש">
+            </div>
+            <div class="form-group">
+                <label for="newPassword">סיסמה:</label>
+                <input type="password" id="newPassword" placeholder="הזן סיסמה">
+            </div>
+            <div class="form-group">
+                <label for="newRole">תפקיד:</label>
+                <select id="newRole">
+                    <option value="User">משתמש רגיל</option>
+                    <option value="Admin">מנהל</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="addNewUser()">הוסף משתמש</button>
+        </div>
+
+        <!-- Users List Section -->
+        <div class="section">
+            <h2>רשימת משתמשים</h2>
+            <div id="usersList" class="user-list">
+                <p>טוען משתמשים...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>עריכת משתמש</h2>
+            </div>
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="editUsername">שם משתמש:</label>
+                    <input type="text" id="editUsername" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="editPassword">סיסמה:</label>
+                    <input type="password" id="editPassword" placeholder="הזן סיסמה חדשה (רשות)">
+                </div>
+                <div class="form-group">
+                    <label for="editRole">תפקיד:</label>
+                    <select id="editRole">
+                        <option value="User">משתמש רגיל</option>
+                        <option value="Admin">מנהל</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-edit" onclick="closeEditModal()">ביטול</button>
+                    <button type="button" class="btn btn-primary" onclick="saveEditUser()">שמור שינויים</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Favorite Modal -->
+    <div id="favoriteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>הוסף שיר למועדפים של <span id="favoriteUsername"></span></h2>
+            </div>
+            <div id="songsList" class="songs-list">
+                <!-- שירים ייטענו כאן -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-edit" onclick="closeAddFavoriteModal()">ביטול</button>
+                <button type="button" class="btn btn-primary" onclick="saveAddFavorite()">הוסף למועדפים</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/admin.js"></script>
+</body>
+</html>

@@ -1,50 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="he" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
-    <title>song CRUD</title>
-    <link rel="stylesheet" href="css/site.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ניהול פרטי משתמש</title>
+    <link rel="stylesheet" href="/css/user.css" />
 </head>
 
 <body>
-    <h1>users</h1>
-    <h3>Add</h3>
-    <form action="javascript:void(0);" method="POST" onsubmit="addItem()">
-        <input type="text" id="add-name" placeholder="New user">
-        <input type="password" id="add-password" placeholder="Password">
-        <input type="submit" value="Add">
-    </form>
-
-    <div id="editForm">
-        <h3>Edit</h3>
-        <form action="javascript:void(0);" onsubmit="updateItem()">
-            <input type="hidden" id="edit-id">
-                    <!-- <input type="checkbox" id="edit-isGlutenFree"> -->
-            <input type="text" id="edit-name">
-            <input type="password" id="edit-password" placeholder="Password">
-            <input type="submit" value="Save">
-            <a onclick="closeInput()" aria-label="Close">&#10006;</a>
-        </form>
+    <div class="header">
+        <h1>ניהול פרטי משתמש</h1>
+        <button onclick="logout()">התנתקות</button>
     </div>
 
-    <p id="counter"></p>
+    <div id="adminLink" style="margin-bottom: 20px;"></div>
 
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>edit</th>
-            <th>delete</th>
-            <th>Id</th>
-            <th>Password</th>
-        </tr>
-        <tbody id="user"></tbody>
-    </table>
-<a href="./index.html">לחזרה לעמוד הבית</a>
-    <script src="js/siteUser.js" asp-append-version="true"></script>
+    <!-- קישור לרשימת השירים המועדפים של המנהל -->
+    <div id="adminFavoritesLink" style="margin-bottom: 20px;"></div>
+    
+
+    <div class="form-section">
+        <h3>עדכון פרטי האישור</h3>
+        <div id="message"></div>
+        <div class="form-group">
+            <label for="profile-username">שם משתמש:</label>
+            <input type="text" id="profile-username" required>
+        </div>
+        <div class="form-group">
+            <label for="profile-password">סיסמה חדשה (אופציונלי):</label>
+            <input type="password" id="profile-password" placeholder="הזן סיסמה חדשה">
+        </div>
+        <div class="form-group">
+            <button onclick="updateProfile()">שמור</button>
+        </div>
+    </div>
+
+    <script src="/js/user.js"></script>
     <script type="text/javascript">
-        getItems();
-        
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+        const username = localStorage.getItem('username');
+        const role = localStorage.getItem('role');
+
+        function checkAuth() {
+            if (!token || !userId) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            if (role === 'Admin') {
+              
+                adminLink.innerHTML = '<a href="/admin.html" class="admin-link">ניהול משתמשים</a>';
+
+                const adminFavoritesLink = document.getElementById('adminFavoritesLink');
+                adminFavoritesLink.innerHTML = '<a href="/" class="admin-link" style="background: linear-gradient(135deg, #ffd93d 0%, #ff8c42 100%) !important;">רשימת השירים המועדפים שלי</a>';
+            }
+        }
+
+        function loadUserProfile() {
+            document.getElementById('username').value = username;
+        }
+
+        checkAuth();
+        loadUserProfile();
     </script>
 </body>
 

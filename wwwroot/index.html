@@ -1,29 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="he" dir="rtl">
 
 <head>
     <meta charset="UTF-8">
-    <title>song CRUD</title>
-    <link rel="stylesheet" href="css/site.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אתר השירים</title>
+    <link rel="stylesheet" href="/css/index.css" />
 </head>
 
 <body>
-    <h1>songs site</h1>
-    <button onclick="getFavorites()" style="background:#ad731c;color:#fff;padding:8px 16px;border:none;border-radius:4px;margin-bottom:10px;">הצג שירים מועדפים</button>
-    <h3>Add</h3>
-    <form action="javascript:void(0);" method="POST" onsubmit="addItem()">
-        <input type="text" id="add-name" placeholder="New song">
-        <input type="submit" value="Add">
-    </form>
+    <div class="header">
+        <h1>🎵 אתר השירים</h1>
+        <div class="header-right">
+            <span id="userWelcome" style="margin-right: 20px;">שלום, <strong id="userName"></strong></span>
+            <div id="adminControls" style="display: none; margin-right: 20px;">
+                <a href="/admin.html" class="admin-btn">ניהול משתמשים</a>
+            </div>
+            <a href="/user.html" class="profile-btn">פרטיי</a>
+            <button onclick="logout()">התנתקות</button>
+        </div>
+    </div>
 
-    <div id="editForm">
-        <h3>Edit</h3>
+    <div class="favorites-section">
+        <h3>שירים מועדפים שלי</h3>
+        <button onclick="getFavorites()" class="favorites-btn">הצג שירים מועדפים</button>
+    </div>
+
+    <div class="add-song-section">
+        <h3>הוסף שיר חדש</h3>
+        <form action="javascript:void(0);" method="POST" onsubmit="addItem()">
+            <input type="text" id="add-name" placeholder="שם השיר" required>
+            <input type="text" id="add-artist" placeholder="שם הזמר" required>
+            <input type="checkbox" id="add-isVocal"> <label for="add-isVocal">זמרת</label>
+            <input type="submit" value="הוסף">
+        </form>
+    </div>
+
+    <div id="editForm" style="display:none;">
+        <h3>עריכת שיר</h3>
         <form action="javascript:void(0);" onsubmit="updateItem()">
             <input type="hidden" id="edit-id">
-            <input type="checkbox" id="edit-isGlutenFree">
-            <input type="text" id="edit-name">
-            <input type="submit" value="Save">
-            <a onclick="closeInput()" aria-label="Close">&#10006;</a>
+            <input type="text" id="edit-name" placeholder="שם השיר" required>
+            <input type="text" id="edit-artist" placeholder="שם הזמר" required>
+            <input type="checkbox" id="edit-isVocal"> <label for="edit-isVocal">זמרת</label>
+            <input type="submit" value="שמור">
+            <a onclick="closeInput()" aria-label="Close">❌</a>
         </form>
     </div>
 
@@ -31,18 +52,42 @@
 
     <table>
         <tr>
-            <th>isVoice?</th>
-            <th>Name</th>
-            <th></th>
-            <th></th>
+            <th>זמרת?</th>
+            <th>שם השיר</th>
+            <th>הזמר</th>
+            <th>עריכה</th>
+            <th>מחיקה</th>
+            <th>מועדף</th>
         </tr>
         <tbody id="songs"></tbody>
     </table>
-<a href="./user.html">לעמוד משתמשים</a>
-    <script src="js/site.js" asp-append-version="true"></script>
+
+    <script src="/js/site.js"></script>
     <script type="text/javascript">
-        getItems();
-        
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+        const username = localStorage.getItem('username');
+
+        function checkAuth() {
+            if (!token || !userId) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            document.getElementById('userName').innerText = username;
+            getItems();
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('username');
+            localStorage.removeItem('role');
+            localStorage.removeItem('userFavorites');
+            window.location.href = '/login.html';
+        }
+
+        checkAuth();
     </script>
 </body>
 
