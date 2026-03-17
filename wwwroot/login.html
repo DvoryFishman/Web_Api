@@ -5,19 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="js/siteLogin.js"></script>
+    <script src="js/site.js"></script>
 </head>
 
 <body>
 
 
-<div id="log">
-    <form action="login" onsubmit="login()">
-        <input type="text" name="name" id="nameuser" placeholder="הכנס שם">
-        <input type="number" name="id" id="userid" placeholder="הכנס מספר מזהה">
-       
-       <input type="submit" value="Login">
-    </form >
-    </div>
+<div id="login-box" style="max-width:400px;margin:auto;padding:30px;border:1px solid #ccc;border-radius:8px;box-shadow:0 2px 8px #eee;">
+    <h2 style="text-align:center;">התחברות לאתר השירים</h2>
+    <form id="loginForm" action="#" onsubmit="loginUser(); return false;">
+        <label for="username">שם משתמש:</label>
+        <input type="text" name="username" id="username" placeholder="הכנס שם משתמש" required style="width:100%;margin-bottom:10px;">
+        <label for="password">סיסמה:</label>
+        <input type="password" name="password" id="password" placeholder="הכנס סיסמה" required style="width:100%;margin-bottom:10px;">
+        <button type="submit" style="width:100%;background:#2196f3;color:#fff;padding:10px;border:none;border-radius:4px;font-size:16px;">כנס לאתר</button>
+    </form>
+    <div id="loginError" style="color:red;text-align:center;margin-top:10px;display:none;"></div>
+</div>
 </body>
+<script src="js/siteLogin.js"></script>
 
 </html>

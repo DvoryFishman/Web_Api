@@ -11,7 +11,8 @@
     <h1>users</h1>
     <h3>Add</h3>
     <form action="javascript:void(0);" method="POST" onsubmit="addItem()">
-        <input type="text" id="add-name" placeholder="New song">
+        <input type="text" id="add-name" placeholder="New user">
+        <input type="password" id="add-password" placeholder="Password">
         <input type="submit" value="Add">
     </form>
 
@@ -19,8 +20,9 @@
         <h3>Edit</h3>
         <form action="javascript:void(0);" onsubmit="updateItem()">
             <input type="hidden" id="edit-id">
-            <input type="checkbox" id="edit-isGlutenFree">
+                    <!-- <input type="checkbox" id="edit-isGlutenFree"> -->
             <input type="text" id="edit-name">
+            <input type="password" id="edit-password" placeholder="Password">
             <input type="submit" value="Save">
             <a onclick="closeInput()" aria-label="Close">&#10006;</a>
         </form>
@@ -31,8 +33,10 @@
     <table>
         <tr>
             <th>Name</th>
-            <th></th>
-            <th></th>
+            <th>edit</th>
+            <th>delete</th>
+            <th>Id</th>
+            <th>Password</th>
         </tr>
         <tbody id="user"></tbody>
     </table>

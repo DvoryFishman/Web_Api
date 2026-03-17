@@ -14,5 +14,6 @@ public interface Isong
 
     void Delete(int id);
     int Count { get; }
+    Task<IEnumerable<Song>> GetByUserId(int userId);
 
 }

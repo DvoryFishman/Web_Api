@@ -1,6 +1,23 @@
 var songs = [];
 const uri = '/song';
+let userId = localStorage.getItem('userId'); // יש להגדיר את userId לאחר התחברות
+let userFevorites =  localStorage.getItem('userFavorites') ? JSON.parse(localStorage.getItem('userFavorites')) : [];
 
+
+function getFavorites() {
+    userFevorites = localStorage.getItem('userFavorites') ? JSON.parse(localStorage.getItem('userFavorites')) : [];
+    if (!userFevorites.length) {
+        alert('אין שירים מועדפים');
+        return;
+    }
+    fetch(uri)
+        .then(response => response.json())
+        .then(allSongs => {
+            const favSongs = allSongs.filter(song => userFevorites.includes(song.id));
+            _displayItems(favSongs);
+        })
+        .catch(error => console.error('Unable to get favorites.', error));
+}
 function getItems() {
     fetch(uri)
         .then(response => response.json())
@@ -17,25 +34,26 @@ function addItem() {
     };
 
     fetch(uri, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(item)
-        })
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(item)
+    })
         .then(response => {
             if (response.ok) {
-              getItems();
-        }})
+                getItems();
+            }
+        })
         .catch(error => console.error('Unable to add item.', error));
-// closeInput();
-// return false;
-    }
+    // closeInput();
+    // return false;
+}
 function deleteItem(id) {
     fetch(`${uri}/${id}`, {
-            method: 'DELETE'
-        })
+        method: 'DELETE'
+    })
         .then(response => response.json())
         .then(() => getItems())
         .catch(error => console.error('Unable to delete item.', error));
@@ -59,18 +77,18 @@ function updateItem() {
     };
 
     fetch(`${uri}/${itemId}`, {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(item)
-        })
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(item)
+    })
         .then(response => {
-    if (response.ok) {
-        getItems();
-    }
-})
+            if (response.ok) {
+                getItems();
+            }
+        })
         .catch(error => console.error('Unable to update item.', error));
 
     closeInput();
@@ -110,6 +128,10 @@ function _displayItems(data) {
         deleteButton.innerText = 'Delete';
         deleteButton.setAttribute('onclick', `deleteItem(${item.id})`);
 
+        let favButton = button.cloneNode(false);
+        favButton.innerText = 'מועדף';
+        favButton.setAttribute('onclick', `toggleFavorite(${item.id})`);
+
         let tr = tBody.insertRow();
 
         let td1 = tr.insertCell(0);
@@ -124,7 +146,42 @@ function _displayItems(data) {
 
         let td4 = tr.insertCell(3);
         td4.appendChild(deleteButton);
-    });
 
+        let td5 = tr.insertCell(4);
+        td5.appendChild(favButton);
+    });
     songs = data;
 }
+
+function toggleFavorite(songId) {
+    userId = localStorage.getItem('userId');
+    userFevorites =  localStorage.getItem('userFavorites') ? JSON.parse(localStorage.getItem('userFavorites')) : [];
+    if (!userId) {
+        alert('יש להתחבר קודם');
+        return;
+    }
+    fetch(`/user/${userId}`)
+        .then(response => response.json())
+        .then(user => {
+            let favorites = user.Favorites || [];
+            console.log(favorites);
+            if (favorites.includes(songId)) {
+                favorites = favorites.filter(id => id !== songId);
+            } else {
+                favorites.push(songId);
+            }
+            user.Favorites = favorites;
+            fetch(`/user/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            })
+                .then(() => getItems())
+                .catch(error => console.error('Unable to update favorites.', error));
+        });
+}
+
+// ...existing code...

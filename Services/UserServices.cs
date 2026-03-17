@@ -3,43 +3,60 @@ using System.Collections.Generic;
 using System.Linq;
 namespace core.Services
 {
-
     public static class UserService
     {
-        static List<User> Users { get; }
-        static int nextId = 4;
+        static List<User> Users { get; set; }
+        static int nextId = 1;
+        static string filePath = System.IO.Path.Combine("Data", "users.json");
+
         static UserService()
         {
-            Users = new List<User>
-         {
-            new User { Id = 1, Username = "Alice" },
-            new User { Id = 2, Username = "Bob" },
-            new User { Id = 3, Username = "Charlie" }
-         };
+            LoadUsers();
+        }
+
+        public static void LoadUsers()
+        {
+            if (!System.IO.File.Exists(filePath))
+            {
+                Users = new List<User>();
+                return;
+            }
+            var json = System.IO.File.ReadAllText(filePath);
+            Users = System.Text.Json.JsonSerializer.Deserialize<List<User>>(json,
+                new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<User>();
+            if (Users.Count > 0) nextId = Users.Max(u => u.Id) + 1;
+        }
+
+        public static void SaveUsers()
+        {
+            var json = System.Text.Json.JsonSerializer.Serialize(Users, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+            System.IO.File.WriteAllText(filePath, json);
         }
 
         public static List<User> GetAllUsers() => Users;
         public static User? GetUser(int id) => Users.FirstOrDefault(u => u.Id == id);
+        public static User? GetUserByUsername(string username) => Users.FirstOrDefault(u => u.Username == username);
         public static void AddUser(User user)
         {
             user.Id = nextId++;
             Users.Add(user);
+            SaveUsers();
         }
         public static void DeleteUser(int id)
         {
             var user = GetUser(id);
             if (user is null)
                 return;
-
             Users.Remove(user);
+            SaveUsers();
         }
         public static void UpdateUser(User user)
         {
             var index = Users.FindIndex(u => u.Id == user.Id);
             if (index == -1)
                 return;
-
             Users[index] = user;
+            SaveUsers();
         }
         public static int Count => Users.Count();
     }

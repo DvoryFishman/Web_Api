@@ -7,8 +7,13 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Hosting;
 namespace core.Services
 {
-    public class SongServices : Isong
+    public class SongServices : Isong      
     {
+        public Task<IEnumerable<Song>> GetByUserId(int userId)
+        {
+            // אין userId לשיר, לכן מחזירים את כל השירים
+            return Task.FromResult(Songs.AsEnumerable());
+        }
         private readonly List<Song> Songs;
         private int nextId = 3;
         private string filePath;

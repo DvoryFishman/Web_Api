@@ -24,6 +24,17 @@ namespace core.Controllers
             return _songService.GetAll();
         }
 
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<List<Song>>> GetByUserId(int userId)
+        {
+            var user = core.Services.UserService.GetUser(userId);
+            if (user == null || user.Favorites == null)
+                return NotFound();
+            var allSongs = await _songService.GetByUserId(userId);
+            var favSongs = allSongs.Where(s => user.Favorites.Contains(s.Id)).ToList();
+            return favSongs;
+        }
+
         [HttpGet("{id}")]
         public ActionResult<Song> Get(int id)
         {

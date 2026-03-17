@@ -11,32 +11,27 @@ namespace core.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UserController : ControllerBase
-    {
-        public UserController()
-        {
-        }
-        [HttpPost]
-        [Route("[action]")]
-        public ActionResult<String> Login([FromBody] User User)
-        {
-            // var dt = DateTime.Now;
-            // if (User.Username != "D&Y"
-            // || User.Id !=(dt.Year+dt.Day)*dt.Month)
-            // { 
-            //     return Unauthorized();
-            // }
-
-            var claims = new List<Claim>
+    public class UserController : ControllerBase{
+            [HttpGet("{id}/favorites")]
+            public ActionResult<List<int>> GetFavorites(int id)
             {
-                new Claim("username", User.Username),
-                new Claim("userid :", User.Id.ToString()),
-                new Claim("type", "users"),
-            };
-
-            var token = usersTokenService.GetToken(claims);
-
-            return new OkObjectResult(usersTokenService.WriteToken(token));
+                var user = UserService.GetUser(id);
+                if (user == null)
+                    return NotFound();
+                return Ok(user.Favorites);
+            }
+    
+        // public UserController()
+        // {
+        // }
+        [HttpPost]
+        [Route("login")]
+        public ActionResult<User> Login([FromBody] User req)
+        {
+            var user = UserService.GetAllUsers().FirstOrDefault(u => u.Username == req.Username && u.Password == req.Password);
+            if (user == null)
+                return Unauthorized();
+            return Ok(new { id = user.Id, username = user.Username, favorites = user.Favorites });
         }
 
         [HttpGet]
@@ -60,7 +55,8 @@ namespace core.Controllers
         public IActionResult CreateUser(User user)
         {
             UserService.AddUser(user);
-            return CreatedAtAction(nameof(CreateUser), new { id = user.Id }, user);
+
+            return CreatedAtAction(nameof(CreateUser), new { id = user.Id, password = user.Password}, user);
         }
 
         [HttpPut("{id}")]

@@ -10,32 +10,33 @@ function getItems() {
 
 function addItem() {
     const addNameTextbox = document.getElementById('add-name');
-
+    const username = addNameTextbox.value.trim();
+    const password = prompt('הכנס סיסמה למשתמש החדש:');
     const item = {
-        username: addNameTextbox.value.trim()
+        Username: username,
+        Password: password,
+        Favorites: []
     };
-
     fetch(uri, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(item)
-        })
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(item)
+    })
         .then(response => {
             if (response.ok) {
-              getItems();
-        }})
+                getItems();
+            }
+        })
         .catch(error => console.error('Unable to add item.', error));
-// closeInput();
-// return false;
-    }
+}
 
 function deleteItem(id) {
     fetch(`${uri}/${id}`, {
-            method: 'DELETE'
-        })
+        method: 'DELETE'
+    })
         .then(response => response.json())
         .then(() => getItems())
         .catch(error => console.error('Unable to delete item.', error));
@@ -57,18 +58,18 @@ function updateItem() {
     };
 
     fetch(`${uri}/${itemId}`, {
-            method: 'PUT',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(item)
-        })
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(item)
+    })
         .then(response => {
-    if (response.ok) {
-        getItems();
-    }
-})
+            if (response.ok) {
+                getItems();
+            }
+        })
         .catch(error => console.error('Unable to update item.', error));
 
     closeInput();
@@ -84,11 +85,17 @@ function _displayCount(itemCount) {
     const name = (itemCount === 1) ? 'user' : 'user kinds';
 
     document.getElementById('counter').innerText = `${itemCount} ${name}`;
+    document.getElementById('counter').innerText = `${itemCount} ${id}`;
+    document.getElementById('counter').innerText = `${itemCount} ${password}`;
+
 }
 
 function _displayItems(data) {
     const tBody = document.getElementById('user');
     tBody.innerHTML = '';
+    tBody.innerHTML = '';
+    tBody.innerHTML = '';
+
 
     _displayCount(data.length);
 
@@ -108,6 +115,7 @@ function _displayItems(data) {
         deleteButton.innerText = 'Delete';
         deleteButton.setAttribute('onclick', `deleteItem(${item.id})`);
 
+
         let tr = tBody.insertRow();
 
         let td1 = tr.insertCell(0);
@@ -119,7 +127,34 @@ function _displayItems(data) {
 
         let td3 = tr.insertCell(2);
         td3.appendChild(deleteButton);
+
+        let td4 = tr.insertCell(3);
+        td4.appendChild(document.createTextNode(item.id));
     });
 
     users = data;
+}
+
+function showFavorites() {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        alert('את לא מחוברת!');
+        return;
+    }
+    fetch(`/song/user/${userId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('לא נמצאו מועדפים או שגיאה בזיהוי');
+            }
+            return response.json();
+        })
+        .then(favSongs => {
+            // כאן תציגי את השירים המועדפים איך שתרצי
+            console.log('שירים מועדפים:', favSongs);
+            // לדוגמה:
+            alert('שירים מועדפים: ' + favSongs.map(s => s.name || s.Name).join(', '));
+        })
+        .catch(error => {
+            alert(error.message);
+        });
 }
