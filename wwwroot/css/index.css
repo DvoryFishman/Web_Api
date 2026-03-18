@@ -35,7 +35,7 @@ body {
     align-items: center;
 }
 
-.admin-btn {
+.admin-btn{
     background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%) !important;
     color: white !important;
     padding: 12px 20px !important;
@@ -88,7 +88,56 @@ body {
     backdrop-filter: blur(10px);
 }
 
+.buttons-section {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    border: none;
+    padding: 16px 45px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    color: white;
+}
+
+.btn-all-songs {
+    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    
+}
+
+.btn-all-songs:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(78, 205, 196, 0.5);
+}
+
+.btn-favorites {
+    background: linear-gradient(135deg, #ffd93d 0%, #ff8c42 100%);
+}
+
+.btn-favorites:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 217, 61, 0.5);
+}
+
 .favorites-section h3,
+.add-song-section {
+    text-align: center;
+}
+
 .add-song-section h3 {
     margin-top: 0;
     color: #333;
@@ -114,50 +163,64 @@ body {
 form {
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
+    gap: 20px;
     align-items: center;
+    justify-content: center;
 }
 
 form input[type="text"] {
-    padding: 12px 20px;
+    padding: 14px 24px;
     border: 2px solid #e0e0e0;
     border-radius: 25px;
     font-size: 16px;
     transition: all 0.3s ease;
-    min-width: 200px;
+    min-width: 220px;
 }
 
 form input[type="text"]:focus {
     outline: none;
     border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
 }
 
 form input[type="checkbox"] {
     margin-left: 8px;
-    transform: scale(1.2);
+    transform: scale(1.3);
+    cursor: pointer;
 }
 
 form label {
     font-weight: bold;
     color: #555;
+    font-size: 16px;
+    cursor: pointer;
 }
 
 form button[type="submit"] {
     background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
     color: white;
-    padding: 12px 30px;
+    padding: 16px 45px;
     border: none;
     border-radius: 25px;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
 }
 
 form button[type="submit"]:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(78, 205, 196, 0.5);
+}
+
+form button[type="submit"]:active {
+    transform: translateY(-1px);
+}
+
+form button[type="button"]:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 25px rgba(239, 83, 80, 0.5) !important;
 }
 
 .edit-form {
@@ -166,8 +229,11 @@ form button[type="submit"]:hover {
     border-radius: 15px;
     margin-bottom: 30px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);    text-align: center;
 }
+
+#editForm form {
+    justify-content: center;}
 
 .edit-form h3 {
     margin-top: 0;
@@ -184,6 +250,12 @@ form button[type="submit"]:hover {
     font-weight: bold;
     color: #333;
     text-align: center;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+
+#counter {
+    display: inline-block;
+    width: 100%;
 }
 
 .songs-table {
@@ -283,4 +355,28 @@ table button {
 .close-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 3px 10px rgba(117, 117, 117, 0.4);
+}
+.buttons-section {
+    background: rgba(178, 119, 119, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}   
+.btn-all-songs {
+    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+    color: white;
+    border: none;
+    padding: 16px 45px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+
 }

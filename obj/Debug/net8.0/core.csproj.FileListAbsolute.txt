@@ -269,9 +269,12 @@ C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\core.deps.json
 C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\core.runtimeconfig.json
 C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\core.dll
 C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\core.pdb
+C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
 C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
 C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\Microsoft.OpenApi.dll
 C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\Swashbuckle.AspNetCore.Swagger.dll
@@ -300,6 +303,3 @@ C:\יעל\שנה ב\core\Web_Api\obj\Debug\net8.0\refint\core.dll
 C:\יעל\שנה ב\core\Web_Api\obj\Debug\net8.0\core.pdb
 C:\יעל\שנה ב\core\Web_Api\obj\Debug\net8.0\core.genruntimeconfig.cache
 C:\יעל\שנה ב\core\Web_Api\obj\Debug\net8.0\ref\core.dll
-C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
-C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
-C:\יעל\שנה ב\core\Web_Api\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
