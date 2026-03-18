@@ -36,6 +36,9 @@ function getFavorites() {
         return;
     }
 
+    // הצג את הטבלה
+    document.getElementById('songsTable').style.display = 'table';
+
     // תמיד מביא את כל השירים כדי למצוא את המועדפים
     fetch('/song', {
         headers: {
@@ -55,6 +58,9 @@ function getFavorites() {
 function getItems() {
     checkAuth();
     const role = localStorage.getItem('role');
+
+    // הצג את הטבלה
+    document.getElementById('songsTable').style.display = 'table';
 
     // כל המשתמשים רואים את כל השירים
     fetch('/song', {

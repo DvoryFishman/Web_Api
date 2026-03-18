@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>אתר השירים</title>
+    <link rel="stylesheet" href="/css/site.css" />
     <link rel="stylesheet" href="/css/index.css" />
 </head>
 
@@ -21,38 +22,45 @@
         </div>
     </div>
 
-    <div class="favorites-section">
-        <h3>שירים מועדפים שלי</h3>
-        <button onclick="getFavorites()" class="favorites-btn">הצג שירים מועדפים</button>
+    <div class="buttons-section">
+        <button onclick="getItems()" class="btn-all-songs">🎵 הצג כל השירים</button>
+        <button onclick="getFavorites()" class="btn-favorites">⭐ הצג שירים מועדפים</button>
     </div>
 
-    <div class="add-song-section">
-        <h3>הוסף שיר חדש</h3>
+    <div class="add-song-section" id="addSongSection" style="display: none;">
+        <h3>✍️ הוסף שיר חדש</h3>
         <form action="javascript:void(0);" method="POST" onsubmit="addItem()">
             <input type="text" id="add-name" placeholder="שם השיר" required>
             <input type="text" id="add-artist" placeholder="שם הזמר" required>
-            <input type="checkbox" id="add-isVocal"> <label for="add-isVocal">זמרת</label>
-            <input type="submit" value="הוסף">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="add-isVocal"> 
+                <label for="add-isVocal">ווקאלי</label>
+            </div>
+            <input type="submit" value="🎤 הוסף">
         </form>
     </div>
 
     <div id="editForm" style="display:none;">
-        <h3>עריכת שיר</h3>
+        <h3>✏️ עריכת שיר</h3>
         <form action="javascript:void(0);" onsubmit="updateItem()">
             <input type="hidden" id="edit-id">
             <input type="text" id="edit-name" placeholder="שם השיר" required>
             <input type="text" id="edit-artist" placeholder="שם הזמר" required>
-            <input type="checkbox" id="edit-isVocal"> <label for="edit-isVocal">זמרת</label>
-            <input type="submit" value="שמור">
-            <a onclick="closeInput()" aria-label="Close">❌</a>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="edit-isVocal"> 
+                <label for="edit-isVocal">זמרת</label>
+            </div>
+            <input type="submit" value="💾 שמור">
+            <button type="button" onclick="closeInput()" style="background: linear-gradient(135deg, #ef5350 0%, #d32f2f 100%); color: white; padding: 16px 45px; border: none; border-radius: 25px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(239, 83, 80, 0.3);">❌ ביטול</button>
         </form>
     </div>
 
     <p id="counter"></p>
 
-    <table>
+    <div class="songs-table">
+        <table style="display: none;" id="songsTable">
         <tr>
-            <th>זמרת?</th>
+            <th>ווקאלי?</th>
             <th>שם השיר</th>
             <th>הזמר</th>
             <th>עריכה</th>
@@ -61,21 +69,32 @@
         </tr>
         <tbody id="songs"></tbody>
     </table>
+    </div>
 
     <script src="/js/site.js"></script>
     <script type="text/javascript">
-        const token = localStorage.getItem('token');
-        const userId = localStorage.getItem('userId');
-        const username = localStorage.getItem('username');
-
         function checkAuth() {
             if (!token || !userId) {
                 window.location.href = '/login.html';
                 return;
             }
 
+            const username = localStorage.getItem('username');
             document.getElementById('userName').innerText = username;
-            getItems();
+
+            // הצג כפתורי ניהול למנהל
+            const role = localStorage.getItem('role');
+            if (role === 'Admin') {
+                const adminControls = document.getElementById('adminControls');
+                if (adminControls) {
+                    adminControls.style.display = 'inline-block';
+                }
+                // הצג את כפתור הוספת שיר רק למנהל
+                const addSongSection = document.getElementById('addSongSection');
+                if (addSongSection) {
+                    addSongSection.style.display = 'block';
+                }
+            }
         }
 
         function logout() {

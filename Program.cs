@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using core;
+using core.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +26,10 @@ builder.Services.AddControllers()
         opts.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
     });
 builder.Services.AddSingleton<CORE.Interfaces.Isong, core.Services.SongServices>();
+
+// Add async file logger
+builder.Services.AddSingleton<IAsyncFileLogger, AsyncFileLogger>();
+builder.Services.AddHostedService<AsyncFileLogger>();
 
 // Add JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -73,6 +79,8 @@ app.Use(async (context, next) =>
     }
     await next();
 });
+
+app.UseMyLog();
 
 app.UseAuthorization();
 
