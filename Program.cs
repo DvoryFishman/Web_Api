@@ -14,6 +14,8 @@ builder.Services.AddCors(options =>
 });
 
 // Add services to the container.
+    // רישום RabbitMQ ל-DI (עדכני את ה-URI לפי הצורך)
+    builder.Services.AddRabbitMq("amqp://guest:guest@localhost:5672/");
 
 builder.Services.AddControllers()
     .AddJsonOptions(opts =>

@@ -9,6 +9,7 @@
       "core/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.Authentication.JwtBearer": "8.0.0",
+          "RabbitMQ.Client": "6.2.1",
           "Swashbuckle.AspNetCore": "6.6.2",
           "System.IdentityModel.Tokens.Jwt": "8.15.0"
         },
@@ -108,6 +109,18 @@
           }
         }
       },
+      "RabbitMQ.Client/6.2.1": {
+        "dependencies": {
+          "System.Memory": "4.5.4",
+          "System.Threading.Channels": "4.7.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/RabbitMQ.Client.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.2.1.0"
+          }
+        }
+      },
       "Swashbuckle.AspNetCore/6.6.2": {
         "dependencies": {
           "Microsoft.Extensions.ApiDescription.Server": "6.0.5",
@@ -157,7 +170,9 @@
             "fileVersion": "8.15.0.61118"
           }
         }
-      }
+      },
+      "System.Memory/4.5.4": {},
+      "System.Threading.Channels/4.7.1": {}
     }
   },
   "libraries": {
@@ -243,6 +258,13 @@
       "path": "microsoft.openapi/1.6.14",
       "hashPath": "microsoft.openapi.1.6.14.nupkg.sha512"
     },
+    "RabbitMQ.Client/6.2.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kdcin0uz1b9xQPvlLOoa8Y2zQsfu7nRuTrcX02dCLVzwGVlsPp9AFgu1L3kRh4wSFEOGE03OVqpWKxaDlhuowQ==",
+      "path": "rabbitmq.client/6.2.1",
+      "hashPath": "rabbitmq.client.6.2.1.nupkg.sha512"
+    },
     "Swashbuckle.AspNetCore/6.6.2": {
       "type": "package",
       "serviceable": true,
@@ -277,6 +299,20 @@
       "sha512": "sha512-dpodi7ixz6hxK8YCBYAWzm0IA8JYXoKcz0hbCbNifo519//rjUI0fBD8rfNr+IGqq+2gm4oQoXwHk09LX5SqqQ==",
       "path": "system.identitymodel.tokens.jwt/8.15.0",
       "hashPath": "system.identitymodel.tokens.jwt.8.15.0.nupkg.sha512"
+    },
+    "System.Memory/4.5.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1MbJTHS1lZ4bS4FmsJjnuGJOu88ZzTT2rLvrhW7Ygic+pC0NWA+3hgAen0HRdsocuQXCkUTdFn9yHJJhsijDXw==",
+      "path": "system.memory/4.5.4",
+      "hashPath": "system.memory.4.5.4.nupkg.sha512"
+    },
+    "System.Threading.Channels/4.7.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6akRtHK/wab3246t4p5v3HQrtQk8LboOt5T4dtpNgsp3zvDeM4/Gx8V12t0h+c/W9/enUrilk8n6EQqdQorZAA==",
+      "path": "system.threading.channels/4.7.1",
+      "hashPath": "system.threading.channels.4.7.1.nupkg.sha512"
     }
   }
 }

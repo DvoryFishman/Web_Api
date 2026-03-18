@@ -1,11 +1,16 @@
 using core.Models;
 using System.Collections.Generic;
 using System.Linq;
+using core.Services;
+using System.Text;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+
 namespace core.Services
 {
     public static class UserService
     {
-        static List<User> Users { get; set; }
+        static List<User>? Users { get; set; }
         static int nextId = 1;
         static string filePath = System.IO.Path.Combine("Data", "users.json");
 
@@ -36,11 +41,34 @@ namespace core.Services
         public static List<User> GetAllUsers() => Users;
         public static User? GetUser(int id) => Users.FirstOrDefault(u => u.Id == id);
         public static User? GetUserByUsername(string username) => Users.FirstOrDefault(u => u.Username == username);
-        public static void AddUser(User user)
+        public static void AddUser(User user, IServiceProvider? serviceProvider = null)
         {
             user.Id = nextId++;
             Users.Add(user);
             SaveUsers();
+
+            // שליחת הודעה ל-RabbitMQ אם יש ServiceProvider
+            if (serviceProvider != null)
+            {
+                try
+                {
+                    var rabbitService = serviceProvider.GetService<IRabbitMqService>();
+                    if (rabbitService != null)
+                    {
+                        var channel = rabbitService.Channel;
+                        string queueName = "user-events";
+                        channel.QueueDeclare(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
+                        var userJson = System.Text.Json.JsonSerializer.Serialize(user);
+                        var body = Encoding.UTF8.GetBytes(userJson);
+                        channel.BasicPublish(exchange: "", routingKey: queueName, mandatory: false, basicProperties: null, body: body);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // אפשר להוסיף לוג או טיפול בשגיאות
+                    Console.WriteLine($"RabbitMQ error: {ex.Message}");
+                }
+            }
         }
         public static void DeleteUser(int id)
         {

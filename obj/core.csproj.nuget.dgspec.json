@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\יעל\\שנה ב\\core\\Web_Api\\core.csproj": {}
+    "C:\\core\\Web_Api\\core.csproj": {}
   },
   "projects": {
-    "C:\\יעל\\שנה ב\\core\\Web_Api\\core.csproj": {
+    "C:\\core\\Web_Api\\core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\יעל\\שנה ב\\core\\Web_Api\\core.csproj",
+        "projectUniqueName": "C:\\core\\Web_Api\\core.csproj",
         "projectName": "core",
-        "projectPath": "C:\\יעל\\שנה ב\\core\\Web_Api\\core.csproj",
+        "projectPath": "C:\\core\\Web_Api\\core.csproj",
         "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\יעל\\שנה ב\\core\\Web_Api\\obj\\",
+        "outputPath": "C:\\core\\Web_Api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -44,7 +44,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
         "net8.0": {
@@ -53,6 +54,10 @@
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[8.0.0, )"
+            },
+            "RabbitMQ.Client": {
+              "target": "Package",
+              "version": "[6.2.1, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -74,6 +79,24 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.24, 8.0.24]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[8.0.24, 8.0.24]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.24, 8.0.24]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Ref",
+              "version": "[8.0.24, 8.0.24]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -82,7 +105,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.311/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

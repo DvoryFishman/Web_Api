@@ -15,25 +15,19 @@
     "Password": "abcd",
     "Favorites": [
       2,
-      4
+      4,
+      1
     ],
     "Role": "Admin"
   },
   {
-    "Id": 4,
-    "Username": "\u05D7",
-    "Password": "12",
-    "Favorites": [
-      25,
-      12
-    ],
-    "Role": "User"
-  },
-  {
     "Id": 5,
-    "Username": "roni",
+    "Username": "ronen",
     "Password": "222",
-    "Favorites": [],
+    "Favorites": [
+      15,
+      3
+    ],
     "Role": "User"
   },
   {
@@ -43,9 +37,52 @@
     "Favorites": [
       2,
       3,
+      4,
       1,
-      4
+      57,
+      56,
+      55,
+      54,
+      58,
+      59
     ],
     "Role": "Admin"
+  },
+  {
+    "Id": 7,
+    "Username": "\u05E0\u05E2\u05D4 2",
+    "Password": "223",
+    "Favorites": [
+      6,
+      7,
+      3,
+      5,
+      18,
+      2,
+      1,
+      11
+    ],
+    "Role": "User"
+  },
+  {
+    "Id": 8,
+    "Username": "\u05E9\u05E8\u05D9 \u05E4\u05D9\u05E9\u05DE\u05DF",
+    "Password": "789",
+    "Favorites": [
+      57,
+      58
+    ],
+    "Role": "User"
+  },
+  {
+    "Id": 9,
+    "Username": "\u05DE\u05DC\u05D9",
+    "Password": "565",
+    "Favorites": [
+      1,
+      2,
+      3
+    ],
+    "Role": "User"
   }
 ]
