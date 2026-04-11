@@ -1,9 +1,9 @@
 let currentUserId = null;
-let token = localStorage.getItem('token');
+let token = sessionStorage.getItem('token');
 const apiBaseUrl = '';
 
 console.log('Token:', token);
-console.log('Role:', localStorage.getItem('role'));
+console.log('Role:', sessionStorage.getItem('role'));
 
 // Check if user is logged in and is admin
 function checkAdminAccess() {
@@ -12,7 +12,7 @@ function checkAdminAccess() {
         return;
     }
     
-    const role = localStorage.getItem('role');
+    const role = sessionStorage.getItem('role');
     if (role !== 'Admin') {
         alert('אתה לא מורשה לגשת לדף זה');
         window.location.href = '/user.html';
@@ -155,15 +155,20 @@ async function saveAddFavorite() {
             }
         });
 
-        user.Favorites = favorites;
-
-        const updateResponse = await fetch(`/user/${currentUserId}`, {
+        // שלח עדכון ל-API החדש כדי להפעיל SignalR
+        const updateResponse = await fetch(`/song/user/${currentUserId}/admin-update`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(user)
+            body: JSON.stringify({
+                id: user.id,
+                username: user.username,
+                password: user.password,
+                role: user.role,
+                favorites: favorites
+            })
         });
 
         if (!updateResponse.ok) {
@@ -192,7 +197,8 @@ async function saveEditUser() {
             favorites: []
         };
 
-        const response = await fetch(`/user/${currentUserId}`, {
+        // שלח עדכון ל-API החדש כדי להפעיל SignalR
+        const response = await fetch(`/song/user/${currentUserId}/admin-update`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -287,10 +293,10 @@ async function addNewUser() {
 }
 
 function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('username');
-    localStorage.removeItem('role');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('username');
+    sessionStorage.removeItem('role');
     window.location.href = '/login.html';
 }
 

@@ -9,13 +9,15 @@
 </head>
 
 <body>
+    <div id="notificationContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 400px;"></div>
+    
     <div class="header">
         <h1>🎵 אתר השירים</h1>
         <div class="header-right">
             <span id="userWelcome" style="margin-right: 20px;">שלום, <strong id="userName"></strong></span>
-            <div id="adminControls" style="display: none; margin-right: 20px;">
-                <a href="/admin.html" class="admin-btn">ניהול משתמשים</a>
-            </div>
+            <!-- <div id="adminControls" style="display: none; margin-right: 20px;"> -->
+            <a href="/admin.html" class="admin-btn">ניהול משתמשים</a>
+            <!-- </div> -->
             <a href="/user.html" class="profile-btn">פרטיי</a>
             <button onclick="logout()">התנתקות</button>
         </div>
@@ -50,25 +52,16 @@
 
     <p id="counter"></p>
 
-    <table>
-        <tr>
-            <th>זמרת?</th>
-            <th>שם השיר</th>
-            <th>הזמר</th>
-            <th>עריכה</th>
-            <th>מחיקה</th>
-            <th>מועדף</th>
-        </tr>
-        <tbody id="songs"></tbody>
-    </table>
+    <div id="songs" class="songs-grid"></div>
 
     <script src="/js/site.js"></script>
     <script type="text/javascript">
-        const token = localStorage.getItem('token');
-        const userId = localStorage.getItem('userId');
-        const username = localStorage.getItem('username');
-
+        // השתמש ב-sessionStorage בלבד!
         function checkAuth() {
+            const token = sessionStorage.getItem('token');
+            const userId = sessionStorage.getItem('userId');
+            const username = sessionStorage.getItem('username');
+            
             if (!token || !userId) {
                 window.location.href = '/login.html';
                 return;
@@ -79,16 +72,61 @@
         }
 
         function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('userId');
-            localStorage.removeItem('username');
-            localStorage.removeItem('role');
-            localStorage.removeItem('userFavorites');
+            sessionStorage.clear();
             window.location.href = '/login.html';
         }
 
         checkAuth();
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft.signalr/5.0.11/signalr.min.js"></script>
+<script>
+    function showNotification(htmlMessage) {
+        const container = document.getElementById('notificationContainer');
+        const notif = document.createElement('div');
+        notif.style.cssText = 'animation: slideIn 0.3s ease-in-out; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;';
+        notif.innerHTML = htmlMessage;
+        container.appendChild(notif);
+        
+        // Auto-remove after 6 seconds
+        setTimeout(() => {
+            notif.style.animation = 'slideOut 0.3s ease-in-out';
+            setTimeout(() => notif.remove(), 300);
+        }, 6000);
+    }
+
+    // Add animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { transform: translateX(450px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(450px); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Initialize Signction if token exists
+    const tokenForSignalR = sessionStorage.getItem('token');
+    if (tokenForSignalR) {
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/notificationHub", {
+                accessTokenFactory: () => tokenForSignalR
+            })
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("ReceiveMessage", function (message) {
+            showNotification(message);
+        });
+
+        connection.start().catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+</script>
 </body>
 
 </html>

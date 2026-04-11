@@ -136,7 +136,7 @@ function _displayItems(data) {
 }
 
 function showFavorites() {
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
     if (!userId) {
         alert('את לא מחוברת!');
         return;

@@ -17,14 +17,18 @@ function loginUser() {
         if (response.ok) {
             response.json().then(data => {
                 // שמור את כל הנתונים הדרושים
-                localStorage.setItem('userId', data.id);
-                localStorage.setItem('username', data.username);
-                localStorage.setItem('role', data.role);
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('userFavorites', JSON.stringify(data.favorites || []));
+                sessionStorage.setItem('userId', data.id);
+                sessionStorage.setItem('username', data.username);
+                sessionStorage.setItem('role', data.role);
+                sessionStorage.setItem('token', data.token);
+                sessionStorage.setItem('userFavorites', JSON.stringify(data.favorites || []));
                 
-                // הפנה לעמוד השירים - גם מנהל וגם משתמש רגיל
-                window.location.href = '/index.html';
+                // ניהול ניווט לפי תפקיד
+                if (data.role === 'Admin') {
+                    window.location.href = '/index.html';
+                } else {
+                    window.location.href = '/user.html';
+                }
             });
         } else {
             document.getElementById('loginError').innerText = 'שם משתמש או סיסמה שגויים';

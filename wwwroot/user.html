@@ -9,6 +9,8 @@
 </head>
 
 <body>
+    <div id="notificationContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 400px;"></div>
+
     <div class="header">
         <h1>ניהול פרטי משתמש</h1>
         <button onclick="logout()">התנתקות</button>
@@ -36,34 +38,56 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft.signalr/5.0.11/signalr.min.js"></script>
     <script src="/js/user.js"></script>
     <script type="text/javascript">
-        const token = localStorage.getItem('token');
-        const userId = localStorage.getItem('userId');
-        const username = localStorage.getItem('username');
-        const role = localStorage.getItem('role');
-
-        function checkAuth() {
-            if (!token || !userId) {
-                window.location.href = '/login.html';
-                return;
-            }
-
-            if (role === 'Admin') {
-              
-                adminLink.innerHTML = '<a href="/admin.html" class="admin-link">ניהול משתמשים</a>';
-
-                const adminFavoritesLink = document.getElementById('adminFavoritesLink');
-                adminFavoritesLink.innerHTML = '<a href="/" class="admin-link" style="background: linear-gradient(135deg, #ffd93d 0%, #ff8c42 100%) !important;">רשימת השירים המועדפים שלי</a>';
-            }
-        }
-
-        function loadUserProfile() {
-            document.getElementById('username').value = username;
-        }
-
+        // הפעולות הללו רצות לאחר טעינת user.js
         checkAuth();
         loadUserProfile();
+    </script>
+   <script>
+        function showNotification(htmlMessage) {
+            const container = document.getElementById('notificationContainer');
+            const notif = document.createElement('div');
+            notif.style.cssText = 'animation: slideIn 0.3s ease-in-out; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px;';
+            notif.innerHTML = htmlMessage;
+            container.appendChild(notif);
+            
+            // Auto-remove after 6 seconds
+            setTimeout(() => {
+                notif.style.animation = 'slideOut 0.3s ease-in-out';
+                setTimeout(() => notif.remove(), 300);
+            }, 6000);
+        }
+
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(450px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(450px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/notificationHub", {
+                accessTokenFactory: () => sessionStorage.getItem('token')
+            })
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("ReceiveMessage", function (message) {
+            showNotification(message);
+        });
+
+        connection.start().catch(function (err) {
+            return console.error(err.toString());
+        });
     </script>
 </body>
 

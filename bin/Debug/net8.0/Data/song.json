@@ -1,352 +1,42 @@
-[
+﻿[
   {
     "Id": 1,
-    "Name": "אני מאמין",
-    "Artist": "אברהם פריד",
+    "Name": "להתפלל",
+    "Artist": "אוהד מושקוביץ",
     "IsVocal": true,
-    "UserId": 1
+    "UserId": 1,
+    "AudioUrl": "/songs/אוהד מושקוביץ - להתפלל.mp3"
   },
   {
     "Id": 2,
-    "Name": "שלום עליכם",
-    "Artist": "ישי ריבו",
+    "Name": "לנצח",
+    "Artist": "אוהד מושקוביץ",
     "IsVocal": true,
-    "UserId": 1
+    "UserId": 1,
+    "AudioUrl": "/songs/אוהד מושקוביץ - לנצח.mp3"
   },
   {
     "Id": 3,
-    "Name": "אלוקינו",
-    "Artist": "מוטי שטיינמץ",
+    "Name": "פשוט לחיות",
+    "Artist": "יענקי היל",
     "IsVocal": true,
-    "UserId": 1
+    "UserId": 1,
+    "AudioUrl": "/songs/יענקי היל - פשוט לחיות.mp3"
   },
   {
     "Id": 4,
-    "Name": "אשרי האיש",
-    "Artist": "אבי ארד",
+    "Name": "בדרך אמונה בחרתי",
+    "Artist": "משה קליין",
     "IsVocal": true,
-    "UserId": 1
+    "UserId": 1,
+    "AudioUrl": "/songs/משה קליין - בדרך אמונה בחרתי.mp3"
   },
   {
     "Id": 5,
-    "Name": "לכה דודי",
-    "Artist": "ישי ריבו",
+    "Name": "תן לי",
+    "Artist": "שי וינר",
     "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 6,
-    "Name": "שיר המעלות",
-    "Artist": "אברהם פריד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 7,
-    "Name": "יה ריבון",
-    "Artist": "מוטי שטיינמץ",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 8,
-    "Name": "אל מלא רחמים",
-    "Artist": "אבי ארד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 9,
-    "Name": "שיר השירים",
-    "Artist": "ישי ריבו",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 10,
-    "Name": "אדון עולם",
-    "Artist": "אברהם פריד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 11,
-    "Name": "ברכת כהנים",
-    "Artist": "מוטי שטיינמץ",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 12,
-    "Name": "תפילה לשלום",
-    "Artist": "אבי ארד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 13,
-    "Name": "שיר המשיב הרוח",
-    "Artist": "ישי ריבו",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 14,
-    "Name": "אלוהי נשמה",
-    "Artist": "אברהם פריד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 15,
-    "Name": "שירת הים",
-    "Artist": "מוטי שטיינמץ",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 16,
-    "Name": "תהילים קכו",
-    "Artist": "אבי ארד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 17,
-    "Name": "מי כמוך",
-    "Artist": "ישי ריבו",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 18,
-    "Name": "ברכת המזון",
-    "Artist": "אברהם פריד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 19,
-    "Name": "שירת דבורה",
-    "Artist": "מוטי שטיינמץ",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 20,
-    "Name": "תפילה למשפחה",
-    "Artist": "אבי ארד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 21,
-    "Name": "שיר הכבוד",
-    "Artist": "ישי ריבו",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 22,
-    "Name": "אלוקי נצור",
-    "Artist": "אברהם פריד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 23,
-    "Name": "ברכת אהבה",
-    "Artist": "מוטי שטיינמץ",
-    "IsVocal": true,
-    "UserId": 4
-  },
-  {
-    "Id": 24,
-    "Name": "תפילה לתורה",
-    "Artist": "אבי ארד",
-    "IsVocal": true,
-    "UserId": 4
-  },
-  {
-    "Id": 25,
-    "Name": "שיר השבת",
-    "Artist": "ישי ריבו",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 26,
-    "Name": "אל נורא עלילה",
-    "Artist": "אברהם פריד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 27,
-    "Name": "שירת האזינו",
-    "Artist": "מוטי שטיינמץ",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 28,
-    "Name": "תפילה להודאה",
-    "Artist": "אבי ארד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 29,
-    "Name": "שיר הלויים",
-    "Artist": "ישי ריבו",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 30,
-    "Name": "ברכת השחר",
-    "Artist": "אברהם פריד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 31,
-    "Name": "שיר המעלות ב'",
-    "Artist": "מוטי שטיינמץ",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 32,
-    "Name": "תהילים קטו",
-    "Artist": "אבי ארד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 33,
-    "Name": "שירת דבורה ב'",
-    "Artist": "ישי ריבו",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 34,
-    "Name": "אל אדון",
-    "Artist": "אברהם פריד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 35,
-    "Name": "תפילה לרפואה",
-    "Artist": "מוטי שטיינמץ",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 36,
-    "Name": "שיר הכהנים",
-    "Artist": "אבי ארד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 37,
-    "Name": "ברכת המזון ב'",
-    "Artist": "ישי ריבו",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 38,
-    "Name": "תהילים קיט",
-    "Artist": "אברהם פריד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 39,
-    "Name": "שירת הים ב'",
-    "Artist": "מוטי שטיינמץ",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 40,
-    "Name": "אל מלא רחמים ב'",
-    "Artist": "אבי ארד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 41,
-    "Name": "תפילה לישועה",
-    "Artist": "ישי ריבו",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 42,
-    "Name": "שיר התורה",
-    "Artist": "אברהם פריד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 43,
-    "Name": "ברכת השנה",
-    "Artist": "מוטי שטיינמץ",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 44,
-    "Name": "תפילה לחולים",
-    "Artist": "אבי ארד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 45,
-    "Name": "שיר האמונה",
-    "Artist": "ישי ריבו",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 46,
-    "Name": "ברכת הבנים",
-    "Artist": "אברהם פריד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 47,
-    "Name": "תפילה לשלום בית ישראל",
-    "Artist": "מוטי שטיינמץ",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 48,
-    "Name": "שיר הרעות",
-    "Artist": "אבי ארד",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 49,
-    "Name": "ברכת הכהנים ב'",
-    "Artist": "ישי ריבו",
-    "IsVocal": true,
-    "UserId": 1
-  },
-  {
-    "Id": 50,
-    "Name": "תפילה לעם ישראל",
-    "Artist": "אברהם פריד",
-    "IsVocal": true,
-    "UserId": 1
+    "UserId": 1,
+    "AudioUrl": "/songs/שי וינר - תן לי.mp3"
   }
 ]

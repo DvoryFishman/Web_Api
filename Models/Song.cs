@@ -8,5 +8,6 @@ namespace core.Models
         public string Artist { get; set; } = ""; // שם הזמר
         public bool IsVocal { get; set; }
         public int UserId { get; set; } // בעלים של השיר
+        public string? AudioUrl { get; set; } // קישור לקובץ השיר
     }
 }

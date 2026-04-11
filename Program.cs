@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using core.Controllers.Hubs;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = core.Services.usersTokenService.GetTokenValidationParameters();
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notificationHub"))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
     });
 
 builder.Services.AddAuthorization(options =>
@@ -41,6 +55,9 @@ builder.Services.AddAuthorization(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// הוספת SignalR
+builder.Services.AddSignalR();
 
 WebApplication app = builder.Build();
 
@@ -77,6 +94,10 @@ app.Use(async (context, next) =>
 app.UseAuthorization();
 
 app.MapGet("/", () => Results.Redirect("/login.html"));
+
+
+// מיפוי SignalR
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.MapControllers();
 

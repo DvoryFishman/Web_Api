@@ -1,10 +1,11 @@
-
 using Microsoft.AspNetCore.Mvc;
 using core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using CORE.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
+using core.Controllers.Hubs;
 
 namespace core.Controllers
 {
@@ -14,6 +15,83 @@ namespace core.Controllers
     {
         private readonly Isong _songService;
 
+        private async Task NotifyUser(int userId, string message)
+        {
+            var context = HttpContext.RequestServices.GetService<IHubContext<NotificationHub>>();
+            var connections = NotificationHub.GetConnections(userId.ToString());
+            if (connections.Any() && context != null)
+            {
+                await context.Clients.Clients(connections).SendAsync("ReceiveMessage", message);
+            }
+        }
+
+        [HttpPut("user/{userId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateUser(int userId, [FromBody] Song updateModel)
+        {
+            // שליחת הודעה לכל החיבורים של המשתמש
+            var context = HttpContext.RequestServices.GetService<IHubContext<NotificationHub>>();
+            var connectionIds = NotificationHub.GetConnections(userId.ToString());
+            if (connectionIds.Count > 0 && context != null)
+            {
+                await context.Clients.Clients(connectionIds).SendAsync("ReceiveMessage", "Your profile has been updated by an admin.");
+            }
+            return NoContent();
+        }
+
+       [HttpPut("user/{userId}/admin-update")]
+[Authorize(Roles = "Admin")]
+public async Task<IActionResult> AdminUpdateUser(int userId, [FromBody] User updateModel)
+{
+    var user = core.Services.UserService.GetUser(userId);
+    if (user == null)
+    {
+        Console.WriteLine($"[AdminUpdateUser] User {userId} not found");
+        return NotFound();
+    }
+
+    string adminName = User.FindFirst("username")?.Value ?? "מנהל";
+    List<string> changes = new();
+
+    if (updateModel.Favorites != null && !user.Favorites.SequenceEqual(updateModel.Favorites))
+    {
+        user.Favorites = new List<int>(updateModel.Favorites);
+        changes.Add("המועדפים");
+    }
+    if (!string.IsNullOrEmpty(updateModel.Username) && updateModel.Username != user.Username)
+    {
+        user.Username = updateModel.Username;
+        changes.Add("שם המשתמש");
+    }
+    if (!string.IsNullOrEmpty(updateModel.Password) && updateModel.Password != user.Password)
+    {
+        user.Password = updateModel.Password;
+        changes.Add("הסיסמה");
+    }
+    if (!string.IsNullOrEmpty(updateModel.Role) && updateModel.Role != user.Role)
+    {
+        user.Role = updateModel.Role;
+        changes.Add("ההרשאות");
+    }
+
+    core.Services.UserService.SaveUsers();
+
+    var context = HttpContext.RequestServices.GetService<IHubContext<core.Controllers.Hubs.NotificationHub>>();
+    var connectionIds = core.Controllers.Hubs.NotificationHub.GetConnections(userId.ToString());
+    Console.WriteLine($"[AdminUpdateUser] connectionIds for user {userId}: {string.Join(",", connectionIds)}");
+    Console.WriteLine($"[AdminUpdateUser] changes: {string.Join(", ", changes)}");
+    if (connectionIds != null && connectionIds.Count > 0 && context != null && changes.Count > 0)
+    {
+        string htmlMsg = $"<div style='color:#2196F3;font-weight:bold;'>המנהל <span style='color:#E91E63'>{adminName}</span> שינה לך את: <span style='color:#4CAF50'>{string.Join(", ", changes)}</span></div>";
+        Console.WriteLine($"[AdminUpdateUser] Sending SignalR message: {htmlMsg}");
+        await context.Clients.Clients(connectionIds).SendAsync("ReceiveMessage", htmlMsg);
+    }
+    else
+    {
+        Console.WriteLine($"[AdminUpdateUser] No connections or no changes or context is null");
+    }
+    return NoContent();
+}
         public SongController(Isong songService)
         {
             _songService = songService;
@@ -68,11 +146,12 @@ namespace core.Controllers
 
         [HttpPost]
         [Authorize(Policy = "UserOrAdmin")]
-        public IActionResult Create(Song song)
+        public async Task<IActionResult> Create(Song song)
         {
             int currentUserId = int.Parse(User.FindFirst("id")?.Value ?? "0");
             song.UserId = currentUserId;
             _songService.Add(song);
+            await NotifyUser(currentUserId, $"נוסף שיר חדש: {song.Name}");
             return CreatedAtAction(nameof(Get), new { id = song.Id }, song);
         }
 

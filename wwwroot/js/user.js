@@ -1,26 +1,52 @@
-const token = localStorage.getItem('token');
-const userId = localStorage.getItem('userId');
-const username = localStorage.getItem('username');
-const role = localStorage.getItem('role');
+function getSessionData() {
+    return {
+        token: sessionStorage.getItem('token'),
+        userId: sessionStorage.getItem('userId'),
+        username: sessionStorage.getItem('username'),
+        role: sessionStorage.getItem('role')
+    };
+}
+
 const apiBaseUrl = '';
 
 function checkAuth() {
+    const { token, userId, username, role } = getSessionData();
+
     if (!token || !userId) {
         window.location.href = '/login.html';
         return;
     }
 
-    document.getElementById('userName').innerText = username;
+    // שמירת שדה שם לצפייה
+    const helloName = document.getElementById('userName');
+    if (helloName) {
+        helloName.innerText = username || '';
+    }
 
-    // הצג את לוח הניהול רק למנהלים
+    // קישור ניהול למנהל
+    const adminLink = document.getElementById('adminLink');
+    const adminFavoritesLink = document.getElementById('adminFavoritesLink');
     if (role === 'Admin') {
-        document.getElementById('adminSection').style.display = 'block';
+        if (adminLink) {
+            adminLink.innerHTML = '<a href="/admin.html" class="admin-link">ניהול משתמשים</a>';
+        }
+        if (adminFavoritesLink) {
+            adminFavoritesLink.innerHTML = '<a href="/" class="admin-link" style="background: linear-gradient(135deg, #ffd93d 0%, #ff8c42 100%) !important;">רשימת השירים המועדפים שלי</a>';
+        }
+    } else {
+        if (adminLink) {
+            adminLink.innerHTML = '';
+        }
+        if (adminFavoritesLink) {
+            adminFavoritesLink.innerHTML = '';
+        }
     }
 
     loadUserProfile();
 }
 
 async function loadUserProfile() {
+    const { token, userId, username } = getSessionData();
     try {
         const response = await fetch(`/user/${userId}`, {
             headers: {
@@ -51,12 +77,14 @@ async function updateProfile() {
     }
 
     try {
+        const { token, userId, role } = getSessionData();
+
         const userData = {
-            id: parseInt(userId),
+            id: parseInt(userId, 10),
             username: newUsername,
             password: password || undefined,
-            role: role,
-            favorites: JSON.parse(localStorage.getItem('userFavorites') || '[]')
+            role: role || 'User',
+            favorites: JSON.parse(sessionStorage.getItem('userFavorites') || '[]')
         };
 
         const response = await fetch(`/user/${userId}`, {
@@ -72,8 +100,8 @@ async function updateProfile() {
             throw new Error('שגיאה בעדכון פרטיך');
         }
 
-        // עדכן את השם ב-localStorage
-        localStorage.setItem('username', newUsername);
+        // עדכן את השם ב-sessionStorage
+        sessionStorage.setItem('username', newUsername);
 
         alert('פרטיך עודכנו בהצלחה');
         document.getElementById('profile-password').value = '';
@@ -84,13 +112,10 @@ async function updateProfile() {
 }
 
 function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('username');
-    localStorage.removeItem('role');
-    localStorage.removeItem('userFavorites');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('username');
+    sessionStorage.removeItem('role');
+    sessionStorage.removeItem('userFavorites');
     window.location.href = '/login.html';
 }
-
-// On page load
-checkAuth();

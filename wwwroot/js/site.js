@@ -1,36 +1,14 @@
 var songs = [];
 const uri = '/song';
-let userId = localStorage.getItem('userId');
-let token = localStorage.getItem('token');
-let userFevorites = localStorage.getItem('userFavorites') ? JSON.parse(localStorage.getItem('userFavorites')) : [];
+let userFevorites = [];
 
 const apiBaseUrl = '';
 
-function checkAuth() {
-    if (!token || !userId) {
-        window.location.href = '/login.html';
-        return;
-    }
-
-    const username = localStorage.getItem('username');
-    const role = localStorage.getItem('role');
-
-    if (username) {
-        document.getElementById('userName').innerText = username;
-    }
-
-    // הצג כפתורי ניהול למנהל
-    if (role === 'Admin') {
-        const adminControls = document.getElementById('adminControls');
-        if (adminControls) {
-            adminControls.style.display = 'inline-block';
-        }
-    }
-}
+// Version: 2.0 - Fixed infinite loop issue
 
 function getFavorites() {
-    checkAuth();
-    userFevorites = localStorage.getItem('userFavorites') ? JSON.parse(localStorage.getItem('userFavorites')) : [];
+    const token = sessionStorage.getItem('token');
+    userFevorites = sessionStorage.getItem('userFavorites') ? JSON.parse(sessionStorage.getItem('userFavorites')) : [];
     if (!userFevorites.length) {
         alert('אין שירים מועדפים');
         return;
@@ -53,8 +31,9 @@ function getFavorites() {
 }
 
 function getItems() {
-    checkAuth();
-    const role = localStorage.getItem('role');
+    const token = sessionStorage.getItem('token');
+    const role = sessionStorage.getItem('role');
+    console.log('getItems called, token:', token ? 'exists' : 'missing');
 
     // כל המשתמשים רואים את כל השירים
     fetch('/song', {
@@ -63,14 +42,21 @@ function getItems() {
             'Content-Type': 'application/json'
         }
     })
-        .then(response => response.json())
-        .then(data => _displayItems(data))
+        .then(response => {
+            console.log('Song fetch response:', response.status);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Songs data received:', data);
+            _displayItems(data);
+        })
         .catch(error => console.error('Unable to get items.', error));
 }
 
 function addItem() {
-    checkAuth();
-    const role = localStorage.getItem('role');
+    const token = sessionStorage.getItem('token');
+    const userId = sessionStorage.getItem('userId');
+    const role = sessionStorage.getItem('role');
 
     // רק מנהל יכול להוסיף שיר חדש
     if (role !== 'Admin') {
@@ -117,7 +103,7 @@ function addItem() {
 }
 
 function deleteItem(id) {
-    checkAuth();
+    const token = sessionStorage.getItem('token');
     if (!confirm('האם אתה בטוח שברצונך למחוק שיר זה?')) {
         return;
     }
@@ -150,7 +136,9 @@ function displayEditForm(id) {
 }
 
 function updateItem() {
-    checkAuth();
+    const token = sessionStorage.getItem('token');
+    const userId = sessionStorage.getItem('userId');
+
     const itemId = document.getElementById('edit-id').value;
     const editArtistTextbox = document.getElementById('edit-artist');
 
@@ -201,59 +189,101 @@ function _displayCount(itemCount) {
 }
 
 function _displayItems(data) {
-    const tBody = document.getElementById('songs');
-    tBody.innerHTML = '';
+    const container = document.getElementById('songs');
+    container.innerHTML = '';
 
     _displayCount(data.length);
 
-    const button = document.createElement('button');
-
     data.forEach(item => {
-        let isVocalCheckbox = document.createElement('input');
-        isVocalCheckbox.type = 'checkbox';
-        isVocalCheckbox.disabled = true;
-        isVocalCheckbox.checked = item.isVocal;
+        // Create card container
+        let card = document.createElement('div');
+        card.className = 'song-card';
 
-        let editButton = button.cloneNode(false);
-        editButton.innerText = 'ערוך';
-        editButton.setAttribute('onclick', `displayEditForm(${item.id})`);
+        // Create image section
+        let imageDiv = document.createElement('div');
+        imageDiv.className = 'song-image';
+        imageDiv.innerHTML = '<span class="music-icon">🎵</span>';
+        card.appendChild(imageDiv);
 
-        let deleteButton = button.cloneNode(false);
-        deleteButton.innerText = 'מחק';
-        deleteButton.setAttribute('onclick', `deleteItem(${item.id})`);
+        // Create info section
+        let infoDiv = document.createElement('div');
+        infoDiv.className = 'song-info';
 
-        let favButton = button.cloneNode(false);
-        favButton.innerText = userFevorites.includes(item.id) ? '❤️ מועדף' : '🤍 הוסף למועדפים';
-        favButton.setAttribute('onclick', `toggleFavorite(${item.id})`);
+        // Title
+        let titleP = document.createElement('p');
+        titleP.className = 'song-title';
+        titleP.innerText = item.name;
+        infoDiv.appendChild(titleP);
 
-        let tr = tBody.insertRow();
+        // Artist
+        let artistP = document.createElement('p');
+        artistP.className = 'song-artist';
+        artistP.innerText = item.artist || 'לא צוין';
+        infoDiv.appendChild(artistP);
 
-        let td1 = tr.insertCell(0);
-        td1.appendChild(isVocalCheckbox);
+        // Vocal indicator
+        let vocalP = document.createElement('p');
+        vocalP.className = 'song-vocal';
+        vocalP.innerText = item.isVocal ? '👩 זמרת' : '👨 זמר';
+        infoDiv.appendChild(vocalP);
 
-        let td2 = tr.insertCell(1);
-        let textNode = document.createTextNode(item.name);
-        td2.appendChild(textNode);
+        // Audio player
+        let playerDiv = document.createElement('div');
+        playerDiv.className = 'song-player';
+        let audio = document.createElement('audio');
+        audio.controls = true;
+        audio.style.width = '100%';
+        // Set audio source from item.AudioUrl if available
+        if (item.audioUrl) {
+            audio.innerHTML = `<source src="${item.audioUrl}" type="audio/mpeg">הדפדפן שלך לא תומך בהשמעה`;
+        } else {
+            audio.innerHTML = '<source src="" type="audio/mpeg">אין קובץ שיר זמין';
+        }
+        playerDiv.appendChild(audio);
+        infoDiv.appendChild(playerDiv);
 
-        let td3 = tr.insertCell(2);
-        let artistNode = document.createTextNode(item.artist || 'לא צוין');
-        td3.appendChild(artistNode);
+        // Controls section
+        let controlsDiv = document.createElement('div');
+        controlsDiv.className = 'song-controls';
 
-        let td4 = tr.insertCell(3);
-        td4.appendChild(editButton);
+        // Edit button
+        let editBtn = document.createElement('button');
+        editBtn.className = 'song-edit-btn';
+        editBtn.innerText = '✏️ ערוך';
+        editBtn.setAttribute('onclick', `displayEditForm(${item.id})`);
+        controlsDiv.appendChild(editBtn);
 
-        let td5 = tr.insertCell(4);
-        td5.appendChild(deleteButton);
+        // Delete button
+        let deleteBtn = document.createElement('button');
+        deleteBtn.className = 'song-delete-btn';
+        deleteBtn.innerText = '🗑️ מחק';
+        deleteBtn.setAttribute('onclick', `deleteItem(${item.id})`);
+        controlsDiv.appendChild(deleteBtn);
 
-        let td6 = tr.insertCell(5);
-        td6.appendChild(favButton);
+        // Favorite button
+        let favBtn = document.createElement('button');
+        favBtn.className = 'song-favorite-btn';
+        if (userFevorites.includes(item.id)) {
+            favBtn.classList.add('active');
+            favBtn.innerText = '❤️ מועדף';
+        } else {
+            favBtn.innerText = '🤍 למועדפים';
+        }
+        favBtn.setAttribute('onclick', `toggleFavorite(${item.id})`);
+        controlsDiv.appendChild(favBtn);
+
+        infoDiv.appendChild(controlsDiv);
+        card.appendChild(infoDiv);
+
+        container.appendChild(card);
     });
     songs = data;
 }
-
+    
 function toggleFavorite(songId) {
-    checkAuth();
-    userFevorites = localStorage.getItem('userFavorites') ? JSON.parse(localStorage.getItem('userFavorites')) : [];
+    const token = sessionStorage.getItem('token');
+    const userId = sessionStorage.getItem('userId');
+    userFevorites = sessionStorage.getItem('userFavorites') ? JSON.parse(sessionStorage.getItem('userFavorites')) : [];
 
     // משתמש יכול להוסיף רק לעצמו למועדפים
     fetch(`/user/${userId}`, {
@@ -281,7 +311,7 @@ function toggleFavorite(songId) {
                 body: JSON.stringify(user)
             })
                 .then(() => {
-                    localStorage.setItem('userFavorites', JSON.stringify(favorites));
+                    sessionStorage.setItem('userFavorites', JSON.stringify(favorites));
                     userFevorites = favorites;
                     getItems();
                 })
