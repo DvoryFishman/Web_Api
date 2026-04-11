@@ -14,6 +14,9 @@ function getFavorites() {
         return;
     }
 
+    // הצג את הטבלה
+    document.getElementById('songsTable').style.display = 'table';
+
     // תמיד מביא את כל השירים כדי למצוא את המועדפים
     fetch('/song', {
         headers: {
@@ -34,6 +37,9 @@ function getItems() {
     const token = sessionStorage.getItem('token');
     const role = sessionStorage.getItem('role');
     console.log('getItems called, token:', token ? 'exists' : 'missing');
+
+    // הצג את הטבלה
+    document.getElementById('songsTable').style.display = 'table';
 
     // כל המשתמשים רואים את כל השירים
     fetch('/song', {

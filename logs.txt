@@ -1,0 +1,73 @@
+2026-03-19 00:40:17.384 - Controller: Unknown, Action: Unknown, User: unknown, Duration: 2ms
+2026-03-19 00:40:17.428 - Controller: Unknown, Action: Unknown, User: unknown, Duration: 0ms
+2026-03-19 00:40:18.015 - Controller: Unknown, Action: Unknown, User: unknown, Duration: 0ms
+2026-03-19 00:40:18.025 - Controller: Unknown, Action: Unknown, User: unknown, Duration: 0ms
+2026-03-19 00:40:19.044 - Controller: Unknown, Action: Unknown, User: unknown, Duration: 0ms
+2026-03-19 00:40:22.025 - Controller: User, Action: Login, User: unknown, Duration: 120ms
+2026-03-19 00:40:22.185 - Controller: Unknown, Action: Unknown, User: unknown, Duration: 0ms
+2026-03-19 00:40:22.304 - Controller: Song, Action: GetAll, User: unknown, Duration: 16ms
+2026-03-19 00:40:23.592 - Controller: Unknown, Action: Unknown, User: unknown, Duration: 0ms
+2026-03-19 00:40:23.614 - Controller: User, Action: GetAllUsers, User: unknown, Duration: 14ms
+2026-03-19 00:40:30.788 - Controller: User, Action: CreateUser, User: unknown, Duration: 44ms
+2026-03-19 00:40:30.845 - Controller: User, Action: GetAllUsers, User: unknown, Duration: 3ms
+2026-03-19 00:40:34.870 - Controller: Song, Action: GetAll, User: unknown, Duration: 0ms
+2026-03-19 00:40:37.244 - Controller: User, Action: GetUser, User: unknown, Duration: 4ms
+2026-03-19 00:40:37.260 - Controller: User, Action: UpdateUser, User: unknown, Duration: 5ms
+[2026-03-19 00:43:33.010] Unknown.Unknown | User: anonymous | Duration: 2ms
+[2026-03-19 00:43:33.057] Unknown.Unknown | User: anonymous | Duration: 0ms
+[2026-03-19 00:43:33.480] Unknown.Unknown | User: anonymous | Duration: 0ms
+[2026-03-19 00:43:33.488] Unknown.Unknown | User: anonymous | Duration: 0ms
+[2026-03-19 00:43:34.226] Unknown.Unknown | User: anonymous | Duration: 0ms
+[2026-03-19 00:43:38.415] User.Login | User: anonymous | Duration: 114ms
+[2026-03-19 00:43:44.075] User.Login | User: anonymous | Duration: 42ms
+[2026-03-19 00:43:44.180] Unknown.Unknown | User: anonymous | Duration: 0ms
+[2026-03-19 00:43:44.309] Song.GetAll | User: 1 | Duration: 24ms
+[2026-03-19 00:44:03.135] Unknown.Unknown | User: anonymous | Duration: 0ms
+[2026-03-19 00:44:03.162] User.GetAllUsers | User: 1 | Duration: 9ms
+[2026-03-19 00:44:08.596] User.CreateUser | User: 1 | Duration: 42ms
+[2026-03-19 00:44:08.648] User.GetAllUsers | User: 1 | Duration: 2ms
+[2026-03-19 00:44:25.020] User.CreateUser | User: 1 | Duration: 5ms
+[2026-03-19 00:44:25.031] User.GetAllUsers | User: 1 | Duration: 7ms
+[2026-03-19 00:53:25.768] User.Login | User: anonymous | Duration: 125ms
+[2026-03-19 00:53:30.358] Song.GetAll | User: 1 | Duration: 34ms
+[2026-03-19 00:53:32.657] Song.GetAll | User: 1 | Duration: 2ms
+[2026-03-19 00:53:44.564] User.Login | User: anonymous | Duration: 2ms
+[2026-03-19 00:53:46.653] Song.GetAll | User: 5 | Duration: 2ms
+[2026-03-19 00:53:48.557] Song.GetAll | User: 5 | Duration: 0ms
+[2026-03-19 00:53:49.835] Song.GetAll | User: 5 | Duration: 0ms
+[2026-03-19 00:58:25.409] User.Login | User: anonymous | Duration: 136ms
+[2026-03-19 00:58:28.987] Song.GetAll | User: 5 | Duration: 28ms
+[2026-03-19 00:58:30.697] Song.GetAll | User: 5 | Duration: 2ms
+[2026-03-19 00:59:41.661] Song.GetAll | User: 5 | Duration: 2ms
+[2026-03-19 00:59:59.359] User.Login | User: anonymous | Duration: 3ms
+[2026-03-19 01:01:54.233] User.Login | User: anonymous | Duration: 127ms
+[2026-03-19 01:02:01.317] User.Login | User: anonymous | Duration: 3ms
+[2026-03-19 01:02:15.130] User.Login | User: anonymous | Duration: 1ms
+[2026-03-19 01:09:15.021] User.Login | User: anonymous | Duration: 148ms
+[2026-03-19 01:09:25.703] User.Login | User: anonymous | Duration: 3ms
+[2026-03-19 01:15:52.137] User.Login | User: anonymous | Duration: 122ms
+[2026-03-19 01:15:58.326] User.Login | User: anonymous | Duration: 3ms
+[2026-03-19 01:16:11.859] User.Login | User: anonymous | Duration: 1ms
+[2026-03-19 01:17:49.466] User.Login | User: anonymous | Duration: 1ms
+[2026-03-19 01:17:51.201] Song.GetAll | User: 5 | Duration: 28ms
+[2026-03-19 01:17:52.149] Song.GetAll | User: 5 | Duration: 2ms
+[2026-03-19 01:23:04.163] User.Login | User: anonymous | Duration: 140ms
+[2026-03-19 01:23:50.901] User.GetAllUsers | User: 1 | Duration: 72ms
+[2026-03-19 01:24:09.252] User.Login | User: anonymous | Duration: 60ms
+[2026-03-19 01:27:12.214] User.Login | User: anonymous | Duration: 136ms
+[2026-03-19 01:28:31.112] User.GetAllUsers | User: 1 | Duration: 100ms
+[2026-03-19 01:28:41.078] Unknown.Unknown | User: anonymous | Duration: 2ms
+[2026-03-19 01:28:58.741] User.Login | User: anonymous | Duration: 55ms
+[2026-03-19 01:29:20.763] Unknown.Unknown | User: anonymous | Duration: 0ms
+[2026-03-19 01:29:20.926] Unknown.Unknown | User: anonymous | Duration: 0ms
+[2026-03-19 01:29:27.586] User.Login | User: anonymous | Duration: 1ms
+[2026-03-19 01:31:47.247] Unknown.Unknown | User: anonymous | Duration: 2ms
+[2026-03-19 01:31:47.342] Unknown.Unknown | User: anonymous | Duration: 0ms
+[2026-03-19 01:31:59.716] User.Login | User: anonymous | Duration: 140ms
+[2026-03-19 01:33:02.653] User.Login | User: anonymous | Duration: 125ms
+[2026-03-19 01:33:42.145] User.Login | User: anonymous | Duration: 131ms
+[2026-03-19 01:34:29.365] User.Login | User: anonymous | Duration: 128ms
+[2026-03-19 01:37:38.427] Unknown.Unknown | User: anonymous | Duration: 11ms
+[2026-03-19 01:37:42.858] User.Login | User: anonymous | Duration: 136ms
+[2026-03-19 01:37:53.426] Song.Create | User: 1 | Duration: 83ms
+[2026-03-19 01:37:53.522] Song.GetAll | User: 1 | Duration: 8ms
