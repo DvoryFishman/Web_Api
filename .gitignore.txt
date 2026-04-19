@@ -1,0 +1,19 @@
+# הקבצים שהמערכת יוצרת בזמן הרצה (הגורם העיקרי למשקל הגדול)
+[Bb]in/
+[Oo]bj/
+
+# הגדרות אישיות של Visual Studio
+.vs/
+*.user
+*.userosscache
+*.sln.docstates
+
+# קבצים זמניים של המערכת
+*.log
+*.tmp
+
+# הגדרות של VS Code (אם את משתמשת)
+.vscode/
+
+# קבצי פרסום (Publish)
+appsettings.Development.json

@@ -23,12 +23,10 @@ function loginUser() {
                 sessionStorage.setItem('token', data.token);
                 sessionStorage.setItem('userFavorites', JSON.stringify(data.favorites || []));
                 
-                // ניהול ניווט לפי תפקיד
-                if (data.role === 'Admin') {
-                    window.location.href = '/index.html';
-                } else {
-                    window.location.href = '/user.html';
-                }
+                // ניהול ניווט לפי תפקיד - כל המשתמשים לindex.html
+                
+                window.location.href = '/index.html';
+                
             });
         } else {
             document.getElementById('loginError').innerText = 'שם משתמש או סיסמה שגויים';

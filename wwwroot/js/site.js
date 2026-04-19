@@ -1,10 +1,40 @@
 var songs = [];
+var allSongs = []; // לשמירת כל השירים ללא סינון
 const uri = '/song';
 let userFevorites = [];
+let isShowingFavorites = false;
 
 const apiBaseUrl = '';
 
-// Version: 2.0 - Fixed infinite loop issue
+// Version: 3.0 - Fixed favorites toggle and display
+
+function toggleFavoritesView() {
+    const btn = document.getElementById('favoritesToggleBtn');
+    
+    if (isShowingFavorites) {
+        // חזור לרשימה הכללית - הצג את כל השירים
+        isShowingFavorites = false;
+        btn.innerText = 'הצג שירים מועדפים';
+        console.log('Showing all songs:', allSongs.length);
+        songs = allSongs; // החזר את כל השירים
+        _displayItems(allSongs);
+    } else {
+        // הצג מועדפים בלבד
+        userFevorites = sessionStorage.getItem('userFavorites') 
+            ? JSON.parse(sessionStorage.getItem('userFavorites')) 
+            : [];
+            
+        if (!userFevorites || userFevorites.length === 0) {
+            alert('אין שירים מועדפים');
+            return;
+        }
+        isShowingFavorites = true;
+        btn.innerText = 'חזור לרשימת השירים';
+        const favoriteSongs = allSongs.filter(song => userFevorites.includes(song.id));
+        console.log('Showing favorite songs:', favoriteSongs.length);
+        _displayItems(favoriteSongs);
+    }
+}
 
 function getFavorites() {
     const token = sessionStorage.getItem('token');
@@ -14,34 +44,19 @@ function getFavorites() {
         return;
     }
 
-    // הצג את הטבלה
-    document.getElementById('songsTable').style.display = 'table';
-
-    // תמיד מביא את כל השירים כדי למצוא את המועדפים
-    fetch('/song', {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            // סינון רק לשירים מועדפים
-            const favoriteSongs = data.filter(song => userFevorites.includes(song.id));
-            _displayItems(favoriteSongs);
-        })
-        .catch(error => console.error('Unable to get favorites.', error));
+    console.log('getFavorites called, userFavorites:', userFevorites);
+    // סינון רק לשירים מועדפים
+    const favoriteSongs = songs.filter(song => userFevorites.includes(song.id));
+    _displayItems(favoriteSongs);
 }
 
 function getItems() {
     const token = sessionStorage.getItem('token');
     const role = sessionStorage.getItem('role');
+    const userId = sessionStorage.getItem('userId');
     console.log('getItems called, token:', token ? 'exists' : 'missing');
 
-    // הצג את הטבלה
-    document.getElementById('songsTable').style.display = 'table';
-
-    // כל המשתמשים רואים את כל השירים
+    // טעון את השירים מה-API כדי להציג גם שירים שנוספו דרך POST
     fetch('/song', {
         headers: {
             'Authorization': `Bearer ${token}`,
@@ -49,14 +64,58 @@ function getItems() {
         }
     })
         .then(response => {
-            console.log('Song fetch response:', response.status);
+            console.log('Song API fetch response:', response.status);
+            if (!response.ok) {
+                throw new Error('Failed to load songs from API');
+            }
             return response.json();
         })
         .then(data => {
             console.log('Songs data received:', data);
-            _displayItems(data);
+            console.log('Number of songs:', data.length);
+            songs = data; // שמור בגלובל
+            allSongs = data; // שמור גם את כל השירים
+            
+            // טעון את המועדפים מה-backend
+            if (token && userId) {
+                loadUserFavorites(token, userId);
+            } else {
+                _displayItems(songs);
+            }
         })
-        .catch(error => console.error('Unable to get items.', error));
+        .catch(error => {
+            console.error('Unable to get items from Data/song.json.', error);
+            alert('שגיאה בטעינת הנתונים: ' + error.message);
+        });
+}
+
+function loadUserFavorites(token, userId) {
+    fetch(`/user/${userId}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                console.warn('Could not load user favorites');
+                return null;
+            }
+        })
+        .then(user => {
+            if (user && user.favorites) {
+                userFevorites = user.favorites;
+                sessionStorage.setItem('userFavorites', JSON.stringify(userFevorites));
+                console.log('Loaded user favorites:', userFevorites);
+            }
+            _displayItems(songs);
+        })
+        .catch(error => {
+            console.error('Error loading favorites:', error);
+            _displayItems(songs);
+        });
 }
 
 function addItem() {
@@ -79,11 +138,15 @@ function addItem() {
         return;
     }
 
+    const songName = addNameTextbox.value.trim();
+    const artistName = addArtistTextbox.value.trim();
+    
     const item = {
-        isVocal: addIsVocal.checked,
-        name: addNameTextbox.value.trim(),
-        artist: addArtistTextbox.value.trim(),
-        userId: userId
+        isVocal: false, // ברירת מחדל
+        name: songName,
+        artist: artistName,
+        userId: userId,
+        audioUrl: `/songs/${artistName} - ${songName}.mp3`
     };
 
     fetch(`/song`, {
@@ -96,16 +159,23 @@ function addItem() {
         body: JSON.stringify(item)
     })
         .then(response => {
+            console.log('Add song response status:', response.status);
             if (response.ok) {
                 addNameTextbox.value = '';
                 addArtistTextbox.value = '';
-                addIsVocal.checked = false;
+                alert('שיר נוסף בהצלחה!');
                 getItems();
             } else {
-                alert('שגיאה בהוספת שיר');
+                response.text().then(text => {
+                    console.error('Server error response:', text);
+                    alert(`שגיאה בהוספת שיר (${response.status}): ${text}`);
+                });
             }
         })
-        .catch(error => console.error('Unable to add item.', error));
+        .catch(error => {
+            console.error('Unable to add item.', error);
+            alert('שגיאה בהוספת שיר: ' + error.message);
+        });
 }
 
 function deleteItem(id) {
@@ -137,7 +207,6 @@ function displayEditForm(id) {
     document.getElementById('edit-name').value = item.name;
     document.getElementById('edit-artist').value = item.artist || '';
     document.getElementById('edit-id').value = item.id;
-    document.getElementById('edit-isVocal').checked = item.isVocal;
     document.getElementById('editForm').style.display = 'block';
 }
 
@@ -155,7 +224,7 @@ function updateItem() {
 
     const item = {
         id: parseInt(itemId, 10),
-        isVocal: document.getElementById('edit-isVocal').checked,
+        isVocal: songs.find(song => song.id === parseInt(itemId, 10))?.isVocal ?? false,
         name: document.getElementById('edit-name').value.trim(),
         artist: editArtistTextbox.value.trim(),
         userId: userId
@@ -227,11 +296,8 @@ function _displayItems(data) {
         artistP.innerText = item.artist || 'לא צוין';
         infoDiv.appendChild(artistP);
 
-        // Vocal indicator
-        let vocalP = document.createElement('p');
-        vocalP.className = 'song-vocal';
-        vocalP.innerText = item.isVocal ? '👩 זמרת' : '👨 זמר';
-        infoDiv.appendChild(vocalP);
+        // Vocal indicator - הסיר ימוג'י
+        // (ניתן להוסיף בעתיד אם נדרש)
 
         // Audio player
         let playerDiv = document.createElement('div');
@@ -271,6 +337,8 @@ function _displayItems(data) {
         favBtn.className = 'song-favorite-btn';
         if (userFevorites.includes(item.id)) {
             favBtn.classList.add('active');
+            favBtn.style.background = '#e74c3c';
+            favBtn.style.color = 'white';
             favBtn.innerText = '❤️ מועדף';
         } else {
             favBtn.innerText = '🤍 למועדפים';
@@ -306,7 +374,7 @@ function toggleFavorite(songId) {
             } else {
                 favorites.push(songId);
             }
-            user.Favorites = favorites;
+            user.favorites = favorites; // תיקון: קטן
             fetch(`/user/${userId}`, {
                 method: 'PUT',
                 headers: {
@@ -319,8 +387,41 @@ function toggleFavorite(songId) {
                 .then(() => {
                     sessionStorage.setItem('userFavorites', JSON.stringify(favorites));
                     userFevorites = favorites;
-                    getItems();
+                    console.log('Favorites updated:', favorites);
+                    // רק עדכן את הכפתור בלי לטעון מחדש
+                    updateFavoriteButton(songId);
                 })
                 .catch(error => console.error('Unable to update favorites.', error));
-        });
+        })
+        .catch(error => console.error('Error fetching user:', error));
+}
+
+function updateFavoriteButton(songId) {
+    // מצא את כל הקרטים וחפש את הכפתור שמתאים לשיר הזה
+    const cards = document.querySelectorAll('div.song-card');
+    
+    cards.forEach(card => {
+        // קבל את שם השיר מהקרט
+        const titleElement = card.querySelector('p.song-title');
+        
+        // מצא את השיר בנתונים
+        const song = songs.find(s => s.name === titleElement.innerText);
+        
+        if (song && song.id === songId) {
+            const favBtn = card.querySelector('button.song-favorite-btn');
+            if (favBtn) {
+                if (userFevorites.includes(songId)) {
+                    favBtn.classList.add('active');
+                    favBtn.style.background = '#e74c3c';
+                    favBtn.style.color = 'white';
+                    favBtn.innerText = '❤️ מועדף';
+                } else {
+                    favBtn.classList.remove('active');
+                    favBtn.style.background = '';
+                    favBtn.style.color = '';
+                    favBtn.innerText = '🤍 למועדפים';
+                }
+            }
+        }
+    });
 }

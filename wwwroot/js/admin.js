@@ -97,24 +97,44 @@ function closeAddFavoriteModal() {
     currentUserId = null;
 }
 
+function closeEditModal() {
+    document.getElementById('editModal').classList.remove('active');
+    currentUserId = null;
+}
+
 async function loadSongsForFavorite() {
     try {
-        const response = await fetch('/song', {
+        // Fetch both songs and current user favorites
+        const songsResponse = await fetch('/song', {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         });
 
-        if (!response.ok) {
+        if (!songsResponse.ok) {
             throw new Error('שגיאה בטעינת שירים');
         }
 
-        const songs = await response.json();
+        const userResponse = await fetch(`/user/${currentUserId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!userResponse.ok) {
+            throw new Error('שגיאה בטעינת נתוני משתמש');
+        }
+
+        const songs = await songsResponse.json();
+        const user = await userResponse.json();
+        const currentFavorites = user.favorites || [];
+
         const songsList = document.getElementById('songsList');
         songsList.innerHTML = songs.map(song => `
             <div class="song-item">
-                <input type="checkbox" id="song-${song.id}" value="${song.id}">
+                <input type="checkbox" id="song-${song.id}" value="${song.id}" ${currentFavorites.includes(song.id) ? 'checked' : ''}>
                 <label for="song-${song.id}">${song.name} - ${song.artist}</label>
             </div>
         `).join('');
@@ -127,13 +147,8 @@ async function loadSongsForFavorite() {
 async function saveAddFavorite() {
     const selectedSongs = Array.from(document.querySelectorAll('#songsList input:checked')).map(cb => parseInt(cb.value));
 
-    if (selectedSongs.length === 0) {
-        alert('אנא בחר לפחות שיר אחד');
-        return;
-    }
-
     try {
-        // קבל את המשתמש הנוכחי
+        // Get the user's current data
         const userResponse = await fetch(`/user/${currentUserId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -146,16 +161,11 @@ async function saveAddFavorite() {
         }
 
         const user = await userResponse.json();
-        let favorites = user.favorites || [];
 
-        // הוסף את השירים הנבחרים למועדפים
-        selectedSongs.forEach(songId => {
-            if (!favorites.includes(songId)) {
-                favorites.push(songId);
-            }
-        });
+        console.log('[saveAddFavorite] Selected songs:', selectedSongs);
+        console.log('[saveAddFavorite] Updating user with new favorites');
 
-        // שלח עדכון ל-API החדש כדי להפעיל SignalR
+        // Send update with new favorites list (toggle favorites)
         const updateResponse = await fetch(`/song/user/${currentUserId}/admin-update`, {
             method: 'PUT',
             headers: {
@@ -167,7 +177,7 @@ async function saveAddFavorite() {
                 username: user.username,
                 password: user.password,
                 role: user.role,
-                favorites: favorites
+                favorites: selectedSongs
             })
         });
 
@@ -175,29 +185,51 @@ async function saveAddFavorite() {
             throw new Error('שגיאה בעדכון מועדפים');
         }
 
-        showMessage('השירים נוספו למועדפים בהצלחה', 'success');
+        console.log('[saveAddFavorite] Update sent successfully');
+        showNotification(`<div style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: white; padding: 15px; border-radius: 8px; font-weight: 500;">✓ המועדפים עודכנו בהצלחה</div>`);
         closeAddFavoriteModal();
+        loadUsers();
     } catch (error) {
         console.error('Error:', error);
-        showMessage('שגיאה בהוספת שירים למועדפים', 'error');
+        showNotification(`<div style="background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%); color: white; padding: 15px; border-radius: 8px; font-weight: 500;">✗ שגיאה בעדכון מועדפים</div>`);
     }
 }
 
 async function saveEditUser() {
-    const password = document.getElementById('editPassword').value;
+    const password = document.getElementById('editPassword').value.trim();
     const role = document.getElementById('editRole').value;
     const username = document.getElementById('editUsername').value;
 
     try {
+        // Get current user data to preserve favorites
+        const userResponse = await fetch(`/user/${currentUserId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!userResponse.ok) {
+            throw new Error('שגיאה בטעינת נתוני משתמש');
+        }
+
+        const currentUser = await userResponse.json();
+
         const userData = {
             id: currentUserId,
             username: username,
-            password: password || undefined,
             role: role,
-            favorites: []
+            favorites: currentUser.favorites || []  // Preserve existing favorites
         };
 
-        // שלח עדכון ל-API החדש כדי להפעיל SignalR
+        // Only include password if it was provided (non-empty)
+        if (password) {
+            userData.password = password;
+        }
+
+        console.log('[saveEditUser] Sending update:', userData);
+
+        // Send update to the new API
         const response = await fetch(`/song/user/${currentUserId}/admin-update`, {
             method: 'PUT',
             headers: {
@@ -211,12 +243,12 @@ async function saveEditUser() {
             throw new Error('שגיאה בעדכון משתמש');
         }
 
-        showMessage('המשתמש עודכן בהצלחה', 'success');
+        showNotification(`<div style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: white; padding: 15px; border-radius: 8px; font-weight: 500;">✓ המשתמש עודכן בהצלחה</div>`);
         closeEditModal();
         loadUsers();
     } catch (error) {
         console.error('Error:', error);
-        showMessage('שגיאה בעדכון משתמש', 'error');
+        showNotification(`<div style="background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%); color: white; padding: 15px; border-radius: 8px; font-weight: 500;">✗ שגיאה בעדכון משתמש</div>`);
     }
 }
 
@@ -238,11 +270,11 @@ async function deleteUser(userId) {
             throw new Error('שגיאה במחיקת משתמש');
         }
 
-        showMessage('המשתמש נמחק בהצלחה', 'success');
+        showNotification(`<div style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: white; padding: 15px; border-radius: 8px; font-weight: 500;">✓ המשתמש נמחק בהצלחה</div>`);
         loadUsers();
     } catch (error) {
         console.error('Error:', error);
-        showMessage('שגיאה במחיקת משתמש', 'error');
+        showNotification(`<div style="background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%); color: white; padding: 15px; border-radius: 8px; font-weight: 500;">✗ שגיאה במחיקת משתמש</div>`);
     }
 }
 
@@ -252,7 +284,7 @@ async function addNewUser() {
     const role = document.getElementById('newRole').value;
 
     if (!username || !password) {
-        showMessage('אנא הזן שם משתמש וסיסמה', 'error');
+        showNotification(`<div style="background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%); color: white; padding: 15px; border-radius: 8px; font-weight: 500;">✗ אנא הזן שם משתמש וסיסמה</div>`);
         return;
     }
 
@@ -281,14 +313,14 @@ async function addNewUser() {
             throw new Error(`שגיאה ביצירת משתמש: ${response.status}`);
         }
 
-        showMessage('משתמש חדש נוסף בהצלחה', 'success');
+        showNotification(`<div style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: white; padding: 15px; border-radius: 8px; font-weight: 500;">✓ משתמש חדש נוסף בהצלחה</div>`);
         document.getElementById('newUsername').value = '';
         document.getElementById('newPassword').value = '';
         document.getElementById('newRole').value = 'User';
         loadUsers();
     } catch (error) {
         console.error('Error:', error);
-        showMessage(error.message || 'שגיאה ביצירת משתמש', 'error');
+        showNotification(`<div style="background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%); color: white; padding: 15px; border-radius: 8px; font-weight: 500;">✗ ${error.message || 'שגיאה ביצירת משתמש'}</div>`);
     }
 }
 

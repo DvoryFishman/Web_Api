@@ -17,12 +17,6 @@ function checkAuth() {
         return;
     }
 
-    // שמירת שדה שם לצפייה
-    const helloName = document.getElementById('userName');
-    if (helloName) {
-        helloName.innerText = username || '';
-    }
-
     // קישור ניהול למנהל
     const adminLink = document.getElementById('adminLink');
     const adminFavoritesLink = document.getElementById('adminFavoritesLink');
@@ -72,7 +66,7 @@ async function updateProfile() {
     const password = document.getElementById('profile-password').value;
 
     if (!newUsername) {
-        alert('אנא הזן שם משתמש');
+        showNotification(`<div style="background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%); color: white; padding: 15px; border-radius: 8px; font-weight: 500;">✗ אנא הזן שם משתמש</div>`);
         return;
     }
 
@@ -103,11 +97,11 @@ async function updateProfile() {
         // עדכן את השם ב-sessionStorage
         sessionStorage.setItem('username', newUsername);
 
-        alert('פרטיך עודכנו בהצלחה');
+        showNotification(`<div style="background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); color: white; padding: 15px; border-radius: 8px; font-weight: 500;">✓ פרטיך עודכנו בהצלחה</div>`);
         document.getElementById('profile-password').value = '';
     } catch (error) {
         console.error('Error:', error);
-        alert('שגיאה בעדכון פרטיך');
+        showNotification(`<div style="background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%); color: white; padding: 15px; border-radius: 8px; font-weight: 500;">✗ שגיאה בעדכון פרטיך</div>`);
     }
 }
 

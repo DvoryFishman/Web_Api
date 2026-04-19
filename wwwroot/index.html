@@ -14,7 +14,10 @@
     <div class="header">
         <h1>🎵 אתר השירים</h1>
         <div class="header-right">
-            <span id="userWelcome" style="margin-right: 20px;">שלום, <strong id="userName"></strong></span>
+            <div id="userWelcome" class="user-welcome">
+                <span class="welcome-text">שלום</span>
+                <span id="userName" class="welcome-name"></span>
+            </div>
             <!-- <div id="adminControls" style="display: none; margin-right: 20px;"> -->
             <a href="/admin.html" class="admin-btn">ניהול משתמשים</a>
             <!-- </div> -->
@@ -25,7 +28,7 @@
 
     <div class="favorites-section">
         <h3>שירים מועדפים שלי</h3>
-        <button onclick="getFavorites()" class="favorites-btn">הצג שירים מועדפים</button>
+        <button id="favoritesToggleBtn" onclick="toggleFavoritesView()" class="favorites-btn">הצג שירים מועדפים</button>
     </div>
 
     <div class="add-song-section">
@@ -33,7 +36,7 @@
         <form action="javascript:void(0);" method="POST" onsubmit="addItem()">
             <input type="text" id="add-name" placeholder="שם השיר" required>
             <input type="text" id="add-artist" placeholder="שם הזמר" required>
-            <input type="checkbox" id="add-isVocal"> <label for="add-isVocal">זמרת</label>
+            <!-- <input type="checkbox" id="add-isVocal"> <label for="add-isVocal">זמרת</label> -->
             <input type="submit" value="הוסף">
         </form>
     </div>
@@ -44,7 +47,7 @@
             <input type="hidden" id="edit-id">
             <input type="text" id="edit-name" placeholder="שם השיר" required>
             <input type="text" id="edit-artist" placeholder="שם הזמר" required>
-            <input type="checkbox" id="edit-isVocal"> <label for="edit-isVocal">זמרת</label>
+            <!-- <input type="checkbox" id="edit-isVocal"> <label for="edit-isVocal">זמרת</label> -->
             <input type="submit" value="שמור">
             <a onclick="closeInput()" aria-label="Close">❌</a>
         </form>
@@ -61,6 +64,7 @@
             const token = sessionStorage.getItem('token');
             const userId = sessionStorage.getItem('userId');
             const username = sessionStorage.getItem('username');
+            const role = sessionStorage.getItem('role');
             
             if (!token || !userId) {
                 window.location.href = '/login.html';
@@ -68,6 +72,20 @@
             }
 
             document.getElementById('userName').innerText = username;
+            
+            // הסתר אלמנטים אם לא admin
+            if (role !== 'Admin') {
+                const adminBtn = document.querySelector('.admin-btn');
+                if (adminBtn) {
+                    adminBtn.style.display = 'none';
+                }
+                
+                const addSongSection = document.querySelector('.add-song-section');
+                if (addSongSection) {
+                    addSongSection.style.display = 'none';
+                }
+            }
+            
             getItems();
         }
 
@@ -79,6 +97,19 @@
         checkAuth();
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft.signalr/5.0.11/signalr.min.js"></script>
+    <!-- Fallback CDN -->
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            if (typeof signalR === 'undefined') {
+                const script = document.createElement('script');
+                script.src = 'https://unpkg.com/@microsoft/signalr@5.0.11/dist/browser/signalr.min.js';
+                script.onerror = function() {
+                    console.warn('[SignalR] Fallback CDN also failed');
+                };
+                document.head.appendChild(script);
+            }
+        });
+    </script>
 <script>
     function showNotification(htmlMessage) {
         const container = document.getElementById('notificationContainer');
@@ -108,9 +139,30 @@
     `;
     document.head.appendChild(style);
 
-    // Initialize Signction if token exists
+    // Initialize SignalR if token exists - wait for it to load from CDN with timeout
     const tokenForSignalR = sessionStorage.getItem('token');
-    if (tokenForSignalR) {
+    let signalRWaitCount = 0;
+    const MAX_WAIT = 50; // 5 seconds (50 * 100ms)
+    
+    function initializeSignalR() {
+        if (typeof signalR === 'undefined') {
+            signalRWaitCount++;
+            
+            if (signalRWaitCount > MAX_WAIT) {
+                console.warn('[SignalR] Timeout waiting for SignalR CDN - proceeding without it');
+                return; // Give up waiting
+            }
+            
+            setTimeout(initializeSignalR, 100);
+            return;
+        }
+        
+        if (!tokenForSignalR) {
+            console.log('[SignalR] No token, skipping SignalR');
+            return;
+        }
+        
+        console.log('[SignalR] Token found, initializing...');
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/notificationHub", {
                 accessTokenFactory: () => tokenForSignalR
@@ -119,13 +171,31 @@
             .build();
 
         connection.on("ReceiveMessage", function (message) {
+            console.log('[SignalR] Received message:', message);
             showNotification(message);
+            
+            // אם ההודעה כוללת עדכון מועדפים, רענן את הנתונים
+            if (message.includes('המועדפים')) {
+                console.log('[SignalR] Favorites updated, reloading data...');
+                setTimeout(() => {
+                    const token = sessionStorage.getItem('token');
+                    const userId = sessionStorage.getItem('userId');
+                    if (token && userId) {
+                        loadUserFavorites(token, userId);
+                    }
+                }, 500);
+            }
         });
 
-        connection.start().catch(function (err) {
-            return console.error(err.toString());
+        connection.start().then(function () {
+            console.log('[SignalR] Connected successfully');
+        }).catch(function (err) {
+            console.error('[SignalR] Connection failed:', err.toString());
         });
     }
+    
+    // Call the initialization function
+    initializeSignalR();
 </script>
 </body>
 

@@ -53,7 +53,7 @@
             <div class="modal-header">
                 <h2>עריכת משתמש</h2>
             </div>
-            <form id="editForm">
+            <form id="editForm" onsubmit="return false;">
                 <div class="form-group">
                     <label for="editUsername">שם משתמש:</label>
                     <input type="text" id="editUsername" readonly>
@@ -81,34 +81,41 @@
     <div id="favoriteModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>הוסף שיר למועדפים של <span id="favoriteUsername"></span></h2>
+                <h2>ערוך מועדפים של <span id="favoriteUsername"></span></h2>
             </div>
             <div id="songsList" class="songs-list">
                 <!-- שירים ייטענו כאן -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-edit" onclick="closeAddFavoriteModal()">ביטול</button>
-                <button type="button" class="btn btn-primary" onclick="saveAddFavorite()">הוסף למועדפים</button>
+                <button type="button" class="btn btn-primary" onclick="saveAddFavorite()">שמור שינויים</button>
             </div>
         </div>
     </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft.signalr/5.0.11/signalr.min.js"></script>
-        <script>
-            if (typeof signalR === 'undefined') {
-                console.warn('SignalR CDN not loaded, מנסה לטעון מקומי');
-                var script = document.createElement('script');
-                script.src = '/lib/signalr/signalr.min.js';
-                document.head.appendChild(script);
-            }
-        </script>
-
         <script src="/js/admin.js"></script>
         <script>
-            // ודא שהפונקציה בודקת הרשאות מיד בטעינה
-            if (typeof checkAdminAccess === 'function') {
+            // תן זמן לSignalR להטעון מה-CDN
+            if (typeof signalR === 'undefined') {
+                console.warn('SignalR טוען עדיין מCDN, מחכים...');
+                let retries = 0;
+                const checkSignalR = setInterval(() => {
+                    if (typeof signalR !== 'undefined') {
+                        clearInterval(checkSignalR);
+                        console.log('SignalR loaded successfully');
+                        checkAdminAccess();
+                    } else if (++retries > 20) {
+                        clearInterval(checkSignalR);
+                        console.error('SignalR failed to load from CDN');
+                        checkAdminAccess();
+                    }
+                }, 100);
+            } else {
+                console.log('SignalR loaded from CDN immediately');
                 checkAdminAccess();
             }
+            
         </script>
 
         <script>
@@ -119,11 +126,14 @@
                 notif.innerHTML = htmlMessage;
                 container.appendChild(notif);
                 
-                // Auto-remove after 6 seconds  
+                // Check if this is a favorites change notification - use 60 seconds, otherwise 6 seconds
+                const timeoutDuration = htmlMessage.includes('המועדפים') ? 60000 : 6000;
+                
+                // Auto-remove after timeout  
                 setTimeout(() => {
                     notif.style.animation = 'slideOut 0.3s ease-in-out';
                     setTimeout(() => notif.remove(), 300);
-                }, 6000);
+                }, timeoutDuration);
             }
 
             // Add animations
@@ -140,20 +150,31 @@
             `;
             document.head.appendChild(style);
 
-            const connection = new signalR.HubConnectionBuilder()
-                .withUrl("/notificationHub", {
-                    accessTokenFactory: () => sessionStorage.getItem('token')
-                })
-                .withAutomaticReconnect()
-                .build();
+            function initializeSignalRForAdmin() {
+                if (typeof signalR === 'undefined') {
+                    console.warn('[SignalR] SignalR טוען עדיין, מחכים...');
+                    setTimeout(initializeSignalRForAdmin, 100);
+                    return;
+                }
 
-            connection.on("ReceiveMessage", function (message) {
-                showNotification(message);
-            });
+                console.log('[SignalR] Initializing for Admin...');
+                const connection = new signalR.HubConnectionBuilder()
+                    .withUrl("/notificationHub", {
+                        accessTokenFactory: () => sessionStorage.getItem('token')
+                    })
+                    .withAutomaticReconnect()
+                    .build();
 
-            connection.start().catch(function (err) {
-                return console.error(err.toString());
-            });
+                connection.on("ReceiveMessage", function (message) {
+                    showNotification(message);
+                });
+
+                connection.start().catch(function (err) {
+                    console.error('[SignalR] Connection failed:', err.toString());
+                });
+            }
+            
+            initializeSignalRForAdmin();
         </script>
 </body>
 </html>

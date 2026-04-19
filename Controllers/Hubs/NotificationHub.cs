@@ -12,7 +12,12 @@ namespace core.Controllers.Hubs
         public override async Task OnConnectedAsync()
         {
             var userId = Context.User?.FindFirst("id")?.Value;
-            Console.WriteLine($"[NotificationHub] User connected: connectionId={Context.ConnectionId}, userId={userId}");
+            Console.WriteLine($"[NotificationHub.OnConnectedAsync] User connected: connectionId={Context.ConnectionId}, userId={userId}");
+            Console.WriteLine($"[NotificationHub.OnConnectedAsync] Context.User: {(Context.User == null ? "null" : "not null")}");
+            if (Context.User != null)
+            {
+                Console.WriteLine($"[NotificationHub.OnConnectedAsync] All claims: {string.Join(", ", Context.User.Claims.Select(c => $"{c.Type}={c.Value}"))}");
+            }
             
             if (!string.IsNullOrEmpty(userId))
             {
@@ -21,11 +26,11 @@ namespace core.Controllers.Hubs
                 {
                     connections.Add(Context.ConnectionId);
                 }
-                Console.WriteLine($"[NotificationHub] Added connection for userId {userId}. Total connections: {connections.Count}");
+                Console.WriteLine($"[NotificationHub.OnConnectedAsync] Added connection for userId {userId}. Total connections: {connections.Count}");
             }
             else
             {
-                Console.WriteLine($"[NotificationHub] User ID is empty. Context.User is {(Context.User == null ? "null" : "not null")}");
+                Console.WriteLine($"[NotificationHub.OnConnectedAsync] User ID is empty!");
             }
             await base.OnConnectedAsync();
         }

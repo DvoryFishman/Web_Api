@@ -34,7 +34,7 @@ namespace core.Controllers
             var connectionIds = NotificationHub.GetConnections(userId.ToString());
             if (connectionIds.Count > 0 && context != null)
             {
-                await context.Clients.Clients(connectionIds).SendAsync("ReceiveMessage", "Your profile has been updated by an admin.");
+                await context.Clients.Clients(connectionIds).SendAsync("ReceiveMessage", "<div style='color:#fff;font-weight:bold;font-size:18px;padding:20px;background:linear-gradient(135deg, #E91E63 0%, #F06292 100%);border-radius:8px;text-align:center;box-shadow:0 6px 20px rgba(233, 30, 99, 0.4);'>המנהל עדכן את הפרופיל שלך</div>");
             }
             return NoContent();
         }
@@ -82,7 +82,18 @@ public async Task<IActionResult> AdminUpdateUser(int userId, [FromBody] User upd
     Console.WriteLine($"[AdminUpdateUser] changes: {string.Join(", ", changes)}");
     if (connectionIds != null && connectionIds.Count > 0 && context != null && changes.Count > 0)
     {
-        string htmlMsg = $"<div style='color:#2196F3;font-weight:bold;'>המנהל <span style='color:#E91E63'>{adminName}</span> שינה לך את: <span style='color:#4CAF50'>{string.Join(", ", changes)}</span></div>";
+        string htmlMsg;
+        
+        // If only favorites were changed, send a prominent notification
+        if (changes.Count == 1 && changes[0] == "המועדפים")
+        {
+            htmlMsg = $"<div style='color:#fff;font-weight:bold;font-size:18px;padding:20px;background:linear-gradient(135deg, #E91E63 0%, #F06292 100%);border-radius:8px;text-align:center;box-shadow:0 6px 20px rgba(233, 30, 99, 0.4);'>המנהל <span style='color:#FFE082'>{adminName}</span> שינה את המועדפים שלך!</div>";
+        }
+        else
+        {
+            htmlMsg = $"<div style='color:#fff;font-weight:bold;font-size:18px;padding:20px;background:linear-gradient(135deg, #E91E63 0%, #F06292 100%);border-radius:8px;text-align:center;box-shadow:0 6px 20px rgba(233, 30, 99, 0.4);'>המנהל <span style='color:#FFE082'>{adminName}</span> שינה לך את <span style='color:#FFF9C4'>{string.Join(", ", changes)}</span>!</div>";
+        }
+        
         Console.WriteLine($"[AdminUpdateUser] Sending SignalR message: {htmlMsg}");
         await context.Clients.Clients(connectionIds).SendAsync("ReceiveMessage", htmlMsg);
     }
@@ -149,8 +160,13 @@ public async Task<IActionResult> AdminUpdateUser(int userId, [FromBody] User upd
         public async Task<IActionResult> Create(Song song)
         {
             int currentUserId = int.Parse(User.FindFirst("id")?.Value ?? "0");
+            string username = User.FindFirst("username")?.Value ?? "unknown";
+            Console.WriteLine($"[SongController.Create] User {username} ({currentUserId}) attempting to add song: {song.Name}");
+            
             song.UserId = currentUserId;
             _songService.Add(song);
+            
+            Console.WriteLine($"[SongController.Create] Song added successfully with ID: {song.Id}");
             await NotifyUser(currentUserId, $"נוסף שיר חדש: {song.Name}");
             return CreatedAtAction(nameof(Get), new { id = song.Id }, song);
         }

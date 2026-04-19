@@ -35,6 +35,29 @@ body {
     align-items: center;
 }
 
+.user-welcome {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-right: 20px;
+}
+
+.welcome-text {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: #333;
+}
+
+.welcome-name {
+    font-size: 1.7em;
+    font-weight: 700;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
 .admin-btn {
     background: linear-gradient(135deg, #ff6b6b 0%, #ff5252 100%) !important;
     color: white !important;
@@ -143,7 +166,8 @@ form label {
     color: #555;
 }
 
-form button[type="submit"] {
+form button[type="submit"],
+form input[type="submit"] {
     background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
     color: white;
     padding: 12px 30px;
@@ -155,9 +179,24 @@ form button[type="submit"] {
     transition: all 0.3s ease;
 }
 
-form button[type="submit"]:hover {
+form button[type="submit"]:hover,
+form input[type="submit"]:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(78, 205, 196, 0.4);
+}
+
+.add-song-section input[type="submit"] {
+    background: linear-gradient(135deg, #0061ff 0%, #60efff 100%);
+    padding: 14px 36px;
+    border-radius: 999px;
+    font-size: 16px;
+    box-shadow: 0 12px 24px rgba(0, 97, 255, 0.18);
+    letter-spacing: 0.4px;
+}
+
+.add-song-section input[type="submit"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 32px rgba(0, 97, 255, 0.22);
 }
 
 .edit-form {

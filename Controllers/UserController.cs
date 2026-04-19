@@ -153,8 +153,8 @@ public async Task<IActionResult> UpdateUser(int id, User user)
     // שלח הודעה לכל החיבורים של המשתמש
     string adminName = User.FindFirst("username")?.Value ?? "משתמש";
     string message = isAdmin && currentUserId != id
-        ? $"<div style='color:#2196F3;font-weight:bold;padding:10px;background:#E3F2FD;border-radius:4px;'>המנהל <span style='color:#E91E63'>{adminName}</span> עדכן את פרטיך!</div>"
-        : "<div style='color:#4CAF50;font-weight:bold;padding:10px;background:#F1F8E9;border-radius:4px;'>הפרטים שלך עודכנו בהצלחה!</div>";
+        ? $"<div style='color:#fff;font-weight:bold;font-size:18px;padding:20px;background:linear-gradient(135deg, #E91E63 0%, #F06292 100%);border-radius:8px;text-align:center;box-shadow:0 6px 20px rgba(233, 30, 99, 0.4);'>המנהל <span style='color:#FFE082'>{adminName}</span> עדכן את פרטיך!</div>"
+        : "<div style='color:#fff;font-weight:bold;font-size:18px;padding:20px;background:linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);border-radius:8px;text-align:center;box-shadow:0 6px 20px rgba(76, 205, 196, 0.4);'>הפרטים שלך עודכנו בהצלחה!</div>";
 
     await NotifyUser(user.Id, message);
 
